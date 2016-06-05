@@ -1,4 +1,4 @@
-sdata <- read.csv("dataForPaul.csv")
+sdata <- read.csv2("dataForPaul.csv")
  #sdata <- read.csv2("noTotal.csv")
 sdata$sympType <- factor(sdata$sympID, labels = c("pos", "neg", "gen"))
 sdata$obs <- factor(1:nrow(sdata))
@@ -69,7 +69,7 @@ cov_matrix <- function(study_id, out_id, v, R, na.rm = FALSE) {
 
 # is the correlation between pos and neg really ~ -0.58?
 # assuming r = 0.58 for now
-cor_mat <- matrix(c(1, 0.58, 0.68, 0.58, 1, 0.6, 0.68, 0.6, 1), 3, 3)
+cor_mat <- matrix(c(1, 0.09, 0.20, 0.09, 1, 0.55, 0.20, 0.55, 1), 3, 3)
 rownames(cor_mat) <- levels(sdata$sympType)
 
 V_SMD_pre <- cov_matrix(study_id = sdata$study, out_id = sdata$sympType,

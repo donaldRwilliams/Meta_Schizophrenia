@@ -1,12 +1,8 @@
-sdata <- read.csv2("dataForPaul.csv")
- #sdata <- read.csv2("noTotal.csv")
-sdata$sympType <- factor(sdata$sympID, labels = c("pos", "neg", "gen"))
+sdata <- read.csv2("symptoms.csv")
 sdata$obs <- factor(1:nrow(sdata))
-# exclude modabbernia et al. 2013 for now
-sdata <- subset(sdata, study != "modabbernia")
 
 library(metafor)
-# Hedges'g (Cohen's d) estimates
+# Hedges'g estimates
 sdata <- escalc(measure="SMD", m1i=oxyMean_post, sd1i=oxySd_post, 
                 n1i=oxyN, m2i=plaMean_post, sd2i=plaSd_post, 
                 n2i=plaN, data=sdata, var.names = c("SMD_post", "vSMD_post"))
@@ -67,8 +63,7 @@ cov_matrix <- function(study_id, out_id, v, R, na.rm = FALSE) {
   mat
 }
 
-# is the correlation between pos and neg really ~ -0.58?
-# assuming r = 0.58 for now
+# correlations based on Peralta and Cuesta 1993
 cor_mat <- matrix(c(1, 0.09, 0.20, 0.09, 1, 0.55, 0.20, 0.55, 1), 3, 3)
 rownames(cor_mat) <- levels(sdata$sympType)
 

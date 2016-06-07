@@ -1,4 +1,4 @@
-sdata <- read.csv2("symptoms.csv")
+sdata <- read.csv2("symptomsMod.csv")
 sdata$obs <- factor(1:nrow(sdata))
 
 library(metafor)

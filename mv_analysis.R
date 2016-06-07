@@ -6,7 +6,9 @@ conditions <- data.frame(study = unique(sdata$study))
 rownames(conditions) <- unique(sdata$study)
 theme_set(theme_bw())
 
-# analyse hedges' g estimates
+
+# ---------------- multivariate analysis ----------------
+# hedges' g estimates
 fit_SMD_post <- brm(SMD_post ~ 0 + sympType + (0+sympType|study), 
                     data = sdata, autocor = cor_fixed(V_SMD_post), 
                     prior = prior, sample_prior = TRUE)
@@ -18,7 +20,7 @@ marginal_effects(fit_SMD_post)
 plot(marginal_effects(fit_SMD_post, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
 
-# analyse SMCR estimates
+# SMCR estimates
 fit_SMCR <- brm(SMCR ~ 0 + sympType + (0+sympType|study), data = sdata,
                 autocor = cor_fixed(V_SMCR), prior = prior,
                 sample_prior = TRUE)
@@ -30,7 +32,9 @@ marginal_effects(fit_SMCR)
 plot(marginal_effects(fit_SMCR, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
 
-# moderator analyses assuming the same effects across symptom types
+
+# ---------------- moderator analyses ---------------- 
+# assuming the same effects across symptom types
 # hedges' g estimates
 fit_SMD_oxyAge <- brm(SMD_post ~ 0 + sympType + oxyAge + (0+sympType|study), 
                     data = sdata, autocor = cor_fixed(V_SMD_post), 
@@ -106,3 +110,46 @@ fit_SMCR_eachDose
 fit_SMCR_admin_int <- update(fit_SMCR_oxyAge, formula. = ~ . + admin_int - oxyAge,
                             newdata = sdata)
 fit_SMCR_admin_int
+
+
+# ---------------- publication bias ----------------
+library(metafor)
+tiff("funnel_plots.tif", height=1100, width=850)
+dcex <- 2
+par(mfrow=c(3,2), mar = c(5, 5, 2, 2) + 0.1)
+# positive
+funnel(rma_SMD_pos <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(sdata, sympType == "positive")), 
+       xlab = "Positive symptoms: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_pos, estimator = "L0")
+funnel(rma_SMCR_pos <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(sdata, sympType == "positive")), 
+       xlab = "Positive symptoms: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_pos, estimator = "L0")
+# negative
+funnel(rma_SMD_neg <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(sdata, sympType == "negative")), 
+       xlab = "Negative symptoms: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_neg, estimator = "L0")
+funnel(rma_SMCR_neg <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(sdata, sympType == "negative")), 
+       xlab = "Negative symptoms: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_neg, estimator = "L0")
+# general
+funnel(rma_SMD_gen <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(sdata, sympType == "general")), 
+       xlab = "General symptoms: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_gen, estimator = "L0")
+funnel(rma_SMCR_gen <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(sdata, sympType == "general")), 
+       xlab = "General symptoms: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_gen, estimator = "L0")
+# TODO: Add overall symptoms
+par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
+dev.off()

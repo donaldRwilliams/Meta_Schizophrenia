@@ -37,8 +37,8 @@ cov_matrix <- function(study_id, out_id, v, R, na.rm = FALSE) {
   #   study_id: a vector of study / sample IDs
   #   out_id: a factor defining outcome IDS
   #   v: a vector containing the variances
-  #   R: a symmetric matrix containing correlation
-  #        between different levels of x
+  #   R: a symmetric matrix containing correlations
+  #      between different levels of out_id
   out_id <- as.character(out_id)
   stopifnot(isSymmetric(unname(R)), 
             nrow(R) == length(unique(out_id)),

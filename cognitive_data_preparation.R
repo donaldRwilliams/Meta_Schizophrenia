@@ -1,4 +1,4 @@
-cdata <- read.csv2("cognitive.csv")
+cdata <- read.csv2("data/cognitive.csv")
 cdata$obs <- 1:nrow(cdata)
 
 library(metafor)

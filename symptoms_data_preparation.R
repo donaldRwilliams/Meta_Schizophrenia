@@ -1,4 +1,4 @@
-adata <- read.csv2("symptomsMod.csv")
+adata <- read.csv2("data/symptoms.csv")
 adata$obs <- 1:nrow(adata)
 
 library(metafor)

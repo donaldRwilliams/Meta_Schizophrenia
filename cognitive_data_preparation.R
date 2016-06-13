@@ -1,16 +1,16 @@
 cdata <- read.csv2("cognitive.csv")
-cdata$obs <- factor(1:nrow(cdata))
+cdata$obs <- 1:nrow(cdata)
 
 library(metafor)
 # Hedges'g estimates
 # for now treat crossover designs as having independent groups
-cdata <- escalc(measure="SMD", m1i=oxyMean_post, sd1i=oxySd_post, 
-                n1i=oxyN, m2i=plaMean_post, sd2i=plaSd_post, 
-                n2i=plaN, data=cdata, var.names = c("SMD_post", "vSMD_post"))
-
 cdata <- escalc(measure="SMD", m1i=oxyMean_pre, sd1i=oxySd_pre, 
                 n1i=oxyN, m2i=plaMean_pre, sd2i=plaSd_pre, 
                 n2i=plaN, data=cdata, var.names = c("SMD_pre", "vSMD_pre"))
+
+cdata <- escalc(measure="SMD", m1i=oxyMean_post, sd1i=oxySd_post, 
+                n1i=oxyN, m2i=plaMean_post, sd2i=plaSd_post, 
+                n2i=plaN, data=cdata, var.names = c("SMD_post", "vSMD_post"))
 
 # assumed pre-post correlation
 cdata$ri <- 0.5
@@ -28,6 +28,12 @@ cdata <- escalc(measure="SMCR", m1i=plaMean_post, m2i=plaMean_pre,
 # for now treat crossover designs as having independent groups
 cdata$SMCR <- cdata$oxySMCR - cdata$plaSMCR
 cdata$vSMCR <- cdata$voxySMCR + cdata$vplaSMCR
+
+
+# correct the direction of effects (positive = improvement)
+cdata$SMD_pre <- cdata$SMD_pre * cdata$direction
+cdata$SMD_post <- cdata$SMD_post * cdata$direction
+cdata$SMCR <- cdata$SMCR * cdata$direction
 
 # compute covariance matrix of the effect sizes
 cov_matrix2 <- function(study_id, v, r, na.rm = FALSE) {

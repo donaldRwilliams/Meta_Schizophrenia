@@ -1,15 +1,15 @@
 adata <- read.csv2("symptomsMod.csv")
-adata$obs <- factor(1:nrow(adata))
+adata$obs <- 1:nrow(adata)
 
 library(metafor)
 # Hedges'g estimates
-adata <- escalc(measure="SMD", m1i=oxyMean_post, sd1i=oxySd_post, 
-                n1i=oxyN, m2i=plaMean_post, sd2i=plaSd_post, 
-                n2i=plaN, data=adata, var.names = c("SMD_post", "vSMD_post"))
-
 adata <- escalc(measure="SMD", m1i=oxyMean_pre, sd1i=oxySd_pre, 
                 n1i=oxyN, m2i=plaMean_pre, sd2i=plaSd_pre, 
                 n2i=plaN, data=adata, var.names = c("SMD_pre", "vSMD_pre"))
+
+adata <- escalc(measure="SMD", m1i=oxyMean_post, sd1i=oxySd_post, 
+                n1i=oxyN, m2i=plaMean_post, sd2i=plaSd_post, 
+                n2i=plaN, data=adata, var.names = c("SMD_post", "vSMD_post"))
 
 # assumed pre-post correlation
 adata$ri <- 0.5

@@ -35,6 +35,17 @@ cdata$SMD_pre <- cdata$SMD_pre * cdata$direction
 cdata$SMD_post <- cdata$SMD_post * cdata$direction
 cdata$SMCR <- cdata$SMCR * cdata$direction
 
+# define factor contrast
+sum_coding <- function(x, levels = levels(x)) {
+  x <- factor(x, levels = levels)
+  contrasts(x) <- contr.sum(length(levels))
+  colnames(contrasts(x)) <- levels[-length(levels)]
+  x
+}
+cdata$subgroup_1 <- sum_coding(subgroup_1)
+cdata$subgroup_2 <- sum_coding(subgroup_2)
+cdata$subgroup_3 <- sum_coding(subgroup_3)
+
 # compute covariance matrix of the effect sizes
 cov_matrix2 <- function(study_id, v, r, na.rm = FALSE) {
   # Args:

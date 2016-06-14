@@ -1,5 +1,10 @@
 cdata <- read.csv2("data/cognitive.csv")
 cdata$obs <- 1:nrow(cdata)
+# remove empty factor levels
+lvls2 <- levels(cdata$subgroup_2)
+cdata$subgroup_2 <- factor(cdata$subgroup_2, lvls2[nchar(lvls2) > 0L])
+lvls3 <- levels(cdata$subgroup_3)
+cdata$subgroup_3 <- factor(cdata$subgroup_3, lvls3[nchar(lvls3) > 0L])
 
 library(metafor)
 # Hedges'g estimates

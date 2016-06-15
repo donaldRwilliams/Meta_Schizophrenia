@@ -1,5 +1,5 @@
 library(brms)
-prior <- c(set_prior("normal(0,0.3)", class = "sd"),
+prior <- c(set_prior("cauchy(0,0.3)", class = "sd"),
            set_prior("normal(0,0.5)"))
 theme_set(theme_bw())
 

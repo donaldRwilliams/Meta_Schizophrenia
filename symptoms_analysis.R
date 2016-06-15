@@ -7,8 +7,8 @@ rownames(conditions) <- unique(sdata$study)
 theme_set(theme_bw())
 
 
-# ---------------- multivariate analysis ----------------
-# hedges' g estimates
+# ---------------- primary (multivariate) meta-analysis ----------------
+## SMD
 fit_SMD_post <- brm(SMD_post ~ 0 + sympType + (0+sympType|study), 
                     data = sdata, autocor = cor_fixed(V_SMD_post), 
                     prior = prior, sample_prior = TRUE)
@@ -20,7 +20,7 @@ marginal_effects(fit_SMD_post)
 plot(marginal_effects(fit_SMD_post, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
 
-# SMCR estimates
+## SMCR
 fit_SMCR <- brm(SMCR ~ 0 + sympType + (0+sympType|study), data = sdata,
                 autocor = cor_fixed(V_SMCR), prior = prior,
                 sample_prior = TRUE)
@@ -46,9 +46,10 @@ fit_SMCR_ove
 (hyp_SMCR_ove <- hypothesis(fit_SMCR_ove, "intercept = 0"))
 plot(hyp_SMCR_ove)
 
+
 # ---------------- moderator analyses ---------------- 
-# assuming the same effects across symptom types
-# hedges' g estimates
+## assuming the same effects across symptom types
+## SMD
 fit_SMD_oxyAge <- brm(SMD_post ~ 0 + sympType + oxyAge + (0+sympType|study), 
                     data = sdata, autocor = cor_fixed(V_SMD_post), 
                     prior = prior, sample_prior = TRUE)
@@ -86,7 +87,7 @@ fit_SMD_admin_int <- update(fit_SMD_oxyAge, formula. = ~ . + admin_int - oxyAge,
                            newdata = sdata)
 fit_SMD_admin_int
 
-# SMCR estimates
+# SMCR
 fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType|study), 
                       data = sdata, autocor = cor_fixed(V_SMCR), 
                       prior = prior, sample_prior = TRUE)

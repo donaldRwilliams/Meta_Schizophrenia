@@ -162,3 +162,21 @@ fit_SMCR_eachDose
 fit_SMCR_admin_int <- update(fit_SMCR_oxyAge, formula. = ~ . - oxyAge + admin_int,
                             newdata = cdata, cores = 2)
 fit_SMCR_admin_int
+
+
+# ---------------- leave one out analysis ----------------
+study_names <- levels(sdata$study)
+fits_SMD_post <- fits_SMCR <-
+  setNames(vector("list", length(study_names)), study_names)
+for (i in seq_along(study_names)) {
+  print(study_names[i])
+  subdata <- droplevels(subset(cdata, study != study_names[i]))
+  sub_V_SMD_post <- cov_matrix2(study_id = subdata$study, 
+                                v = subdata$vSMD_post, r = 0.7)
+  sub_V_SMCR <- cov_matrix2(study_id = subdata$study, 
+                            v = subdata$vSMCR, r = 0.7)
+  fits_SMD_post[[i]] <- update(fit_SMD_post, newdata = subdata,
+                               autocor = cor_fixed(sub_V_SMD_post))
+  fits_SMCR[[i]] <- update(fit_SMCR, newdata = subdata,
+                           autocor = cor_fixed(sub_V_SMCR))
+}

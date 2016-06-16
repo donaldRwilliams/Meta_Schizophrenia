@@ -181,7 +181,8 @@ for (i in seq_along(study_names)) {
                            autocor = cor_fixed(sub_V_SMCR), 
                            cores = 2)
 }
-
+fits_SMD_post
+fits_SMCR
 
 # ------- publication bias ---------------
 library(metafor)
@@ -234,3 +235,20 @@ funnel(rma_SMCR_symp <- rma(SMCR ~ 1, vi = vSMCR,
 trimfill(rma_SMCR_symp, estimator = "L0")
 par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
 dev.off()
+
+
+# ---------- vary between outcome correlation -------------
+rs <- c(0.1, 0.3, 0.5, 0.7, 0.9)
+fits_SMD_post_r <- fits_SMCR_r <-  
+  setNames(vector("list", length(rs)), rs)
+for (i in seq_along(rs)) {
+  V_SMD_post_r <- cov_matrix2(study_id = cdata$study, 
+                              v = cdata$vSMD_post, r = rs[i])
+  V_SMCR_r <- cov_matrix2(study_id = cdata$study,
+                          v = cdata$vSMCR, r = rs[i])
+  fits_SMD_post_r[[i]] <- update(fit_SMD_post, 
+                                 autocor = cor_fixed(V_SMD_post_r))
+  fits_SMCR_r[[i]] <- update(fit_SMCR, autocor = cor_fixed(V_SMCR_r))
+}
+fits_SMD_post_r
+fits_SMCR_r

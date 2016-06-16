@@ -16,8 +16,7 @@ plot(hyp_SMD_post)
 ## SMCR
 fit_SMCR <- brm(SMCR ~ 0 + intercept + (1|obs), 
                 data = cdata, autocor = cor_fixed(V_SMCR), 
-                prior = prior, sample_prior = TRUE,
-                inits = 0)
+                prior = prior, sample_prior = TRUE)
 fit_SMCR
 plot(fit_SMCR, ask = FALSE)
 (hyp_SMCR <- hypothesis(fit_SMCR, "intercept = 0"))
@@ -165,7 +164,7 @@ fit_SMCR_admin_int
 
 
 # ---------------- leave one out analysis ----------------
-study_names <- levels(sdata$study)
+study_names <- levels(cdata$study)
 fits_SMD_post <- fits_SMCR <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {
@@ -176,7 +175,62 @@ for (i in seq_along(study_names)) {
   sub_V_SMCR <- cov_matrix2(study_id = subdata$study, 
                             v = subdata$vSMCR, r = 0.7)
   fits_SMD_post[[i]] <- update(fit_SMD_post, newdata = subdata,
-                               autocor = cor_fixed(sub_V_SMD_post))
+                               autocor = cor_fixed(sub_V_SMD_post),
+                               cores = 2)
   fits_SMCR[[i]] <- update(fit_SMCR, newdata = subdata,
-                           autocor = cor_fixed(sub_V_SMCR))
+                           autocor = cor_fixed(sub_V_SMCR), 
+                           cores = 2)
 }
+
+
+# ------- publication bias ---------------
+library(metafor)
+tiff("cognitive_funnel_plots.tif", height=1100, width=850)
+dcex <- 2
+par(mfrow=c(4, 2), mar = c(5, 5, 2, 2) + 0.1)
+# general_cog
+funnel(rma_SMD_gcog <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(cdata, subgroup_1 == "general_cog")), 
+       xlab = "General cognitions: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_gcog, estimator = "L0")
+funnel(rma_SMCR_gcog <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(cdata, subgroup_1 == "general_cog")), 
+       xlab = "General cognitions: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_gcog, estimator = "L0")
+# social_cog
+funnel(rma_SMD_scog <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(cdata, subgroup_1 == "social_cog")), 
+       xlab = "Social cognitions: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_scog, estimator = "L0")
+funnel(rma_SMCR_scog <- rma(SMCR ~ 1, vi = vSMCR,
+                            data = subset(cdata, subgroup_1 == "social_cog")), 
+       xlab = "Social cognitions: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_scog, estimator = "L0")
+# social_func
+funnel(rma_SMD_sfunc <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(cdata, subgroup_1 == "social_func")), 
+       xlab = "Social functions: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_sfunc, estimator = "L0")
+funnel(rma_SMCR_sfunc <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(cdata, subgroup_1 == "social_func")), 
+       xlab = "Social functions: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_sfunc, estimator = "L0")
+# symptoms
+funnel(rma_SMD_symp <- rma(SMD_post ~ 1, vi = vSMD_post,
+                          data = subset(cdata, subgroup_1 == "symptoms")), 
+       xlab = "Symptoms: Hedges' g", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_symp, estimator = "L0")
+funnel(rma_SMCR_symp <- rma(SMCR ~ 1, vi = vSMCR,
+                           data = subset(cdata, subgroup_1 == "symptoms")), 
+       xlab = "Symptoms: SCMR", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_symp, estimator = "L0")
+par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
+dev.off()

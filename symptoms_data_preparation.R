@@ -68,7 +68,7 @@ cov_matrix <- function(study_id, out_id, v, R, na.rm = FALSE) {
 
 # correlations based on Peralta and Cuesta 1993
 cor_mat <- matrix(c(1, 0.09, 0.20, 0.09, 1, 0.55, 0.20, 0.55, 1), 3, 3)
-rownames(cor_mat) <- levels(sdata$sympType)
+rownames(cor_mat) <- c("positive", "negative", "general")
 V_SMD_pre <- cov_matrix(study_id = sdata$study, out_id = sdata$sympType,
                         v = sdata$vSMD_pre, R = cor_mat)
 

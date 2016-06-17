@@ -1,6 +1,7 @@
 library(brms)
-prior <- c(set_prior("cauchy(0,0.3)", class = "sd"),
-           set_prior("normal(0,0.5)"))
+prior_eff <- set_prior("normal(0,0.5)", class = "b")
+prior_tau <- set_prior("cauchy(0,0.3)", class = "sd")
+prior <- c(prior_eff, prior_tau)
 iter <- 5000
 options(mc.cores = 2)
 control <- list(adapt_delta = 0.95)
@@ -68,7 +69,7 @@ marginal_effects(fit_SMD_sg3)
 ### other moderators
 fit_SMD_oxyAge <- brm(SMD_post ~ oxyAge + (1|obs), 
                       data = cdata, autocor = cor_fixed(V_SMD_post), 
-                      prior = prior, sample_prior = TRUE,
+                      prior = prior_tau, sample_prior = TRUE,
                       iter = iter, control = control)
 fit_SMD_oxyAge
 
@@ -139,7 +140,7 @@ marginal_effects(fit_SMCR_sg3)
 ### other moderators
 fit_SMCR_oxyAge <- brm(SMCR ~ oxyAge + (1|obs), 
                        data = cdata, autocor = cor_fixed(V_SMCR), 
-                       prior = prior, sample_prior = TRUE,
+                       prior = prior_tau, sample_prior = TRUE,
                        iter = iter, control = control)
 fit_SMCR_oxyAge
 

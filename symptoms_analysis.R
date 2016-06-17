@@ -1,6 +1,9 @@
 library(brms)
-prior <- c(set_prior("cauchy(0,0.3)", class = "sd"),
-           set_prior("normal(0,0.5)"))
+prior_tau <- c(set_prior("cauchy(0,0.3)", class = "sd"))
+prior_eff <- c(set_prior("normal(0,0.5)", coef = "sympTypegeneral"),
+               set_prior("normal(0,0.5)", coef = "sympTypenegative"),
+               set_prior("normal(0,0.5)", coef = "sympTypepositive"))
+prior <- rbind(prior_eff, prior_tau)
 iter <- 5000
 options(mc.cores = 2)
 control <- list(adapt_delta = 0.95)
@@ -38,15 +41,17 @@ plot(marginal_effects(fit_SMCR, conditions = conditions,
 
 
 # ---------------- analysis of overall symptoms ---------------- 
+prior_ove <- rbind(c(set_prior("normal(0,0.5)", coef = "intercept")), 
+                   prior_tau)
 fit_SMD_post_ove <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 0 + intercept + (1|study), 
-                        data = tdata, prior = prior, sample_prior = TRUE,
+                        data = tdata, prior = prior_ove, sample_prior = TRUE,
                         iter = iter, control = control)
 fit_SMD_post_ove
 (hyp_SMD_post_ove <- hypothesis(fit_SMD_post_ove, "intercept = 0"))
 plot(hyp_SMD_post_ove)
 
 fit_SMCR_ove <- brm(SMCR | se(sqrt(vSMCR)) ~ 0 + intercept  + (1|study), 
-                    data = tdata, prior = prior, sample_prior = TRUE,
+                    data = tdata, prior = prior_ove, sample_prior = TRUE,
                     iter = iter, control = control)
 fit_SMCR_ove
 (hyp_SMCR_ove <- hypothesis(fit_SMCR_ove, "intercept = 0"))

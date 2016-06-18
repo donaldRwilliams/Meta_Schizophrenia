@@ -1,3 +1,33 @@
+p_value <- function(x, alternative = c("two.sided", "greater", "less")) {
+  # compute p-values based on analyses done with brms
+  # Args:
+  #   x: Either a brmsfit of a brmshypothesis object
+  #   alternative: specifies the type of alternative hypothesis
+  if (is(x, "brmshypothesis")) {
+    hyps <- x$hypothesis
+  } else if (is(x, "brmsfit")) {
+    alternative <- match.arg(alternative)
+    fixef <- fixef(x)
+    sign <- sign(fixef[, 1])
+    fixef <- rownames(fixef)
+    if (alternative == "greater") {
+      hyps <- paste(fixef, "> 0")
+    } else if (alternative == "less") {
+      hyps <- paste(fixef, "< 0")
+    } else {
+      hyps <- paste(fixef, ifelse(sign < 0, "<", ">"), "0") 
+    }
+    hyps <- hypothesis(x, hyps)$hypothesis
+  } else {
+    stop("invalid 'x' argument")
+  }
+  odds <- hyps$Evid.Ratio
+  mult <- ifelse(is(x, "brmsfit") && alternative == "two.sided", 2, 1)
+  out <- (1 - odds / (1 + odds)) * mult
+  names(out) <- rownames(hyps)
+  out
+}
+
 library(brms)
 prior_tau <- c(set_prior("cauchy(0,0.3)", class = "sd"))
 prior_eff <- c(set_prior("normal(0,0.5)", coef = "sympTypegeneral"),
@@ -23,6 +53,7 @@ fit_SMD_post
 plot(fit_SMD_post, ask = FALSE)
 (hyp_SMD_post <- hypothesis(fit_SMD_post, paste("sympType", symp_type, " = 0")))
 plot(hyp_SMD_post)
+p_value(fit_SMD_post)
 marginal_effects(fit_SMD_post)
 plot(marginal_effects(fit_SMD_post, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
@@ -35,6 +66,7 @@ fit_SMCR
 plot(fit_SMCR, ask = FALSE)
 (hyp_SMCR <- hypothesis(fit_SMCR, paste("sympType", symp_type, " = 0")))
 plot(hyp_SMCR)
+p_value(fit_SMCR)
 marginal_effects(fit_SMCR)
 plot(marginal_effects(fit_SMCR, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
@@ -49,6 +81,7 @@ fit_SMD_post_ove <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 0 + intercept + (1|stud
 fit_SMD_post_ove
 (hyp_SMD_post_ove <- hypothesis(fit_SMD_post_ove, "intercept = 0"))
 plot(hyp_SMD_post_ove)
+p_value(fit_SMD_post_ove)
 
 fit_SMCR_ove <- brm(SMCR | se(sqrt(vSMCR)) ~ 0 + intercept  + (1|study), 
                     data = tdata, prior = prior_ove, sample_prior = TRUE,
@@ -56,6 +89,7 @@ fit_SMCR_ove <- brm(SMCR | se(sqrt(vSMCR)) ~ 0 + intercept  + (1|study),
 fit_SMCR_ove
 (hyp_SMCR_ove <- hypothesis(fit_SMCR_ove, "intercept = 0"))
 plot(hyp_SMCR_ove)
+p_value(fit_SMCR_ove)
 
 
 # ---------------- moderator analyses ---------------- 

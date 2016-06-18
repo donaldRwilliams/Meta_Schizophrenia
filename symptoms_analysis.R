@@ -76,7 +76,7 @@ plot(marginal_effects(fit_SMCR, conditions = conditions,
 prior_ove <- rbind(c(set_prior("normal(0,0.5)", coef = "intercept")), 
                    prior_tau)
 fit_SMD_post_ove <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 0 + intercept + (1|study), 
-                        data = tdata, prior = prior_ove, sample_prior = TRUE,
+                        data = ove_data, prior = prior_ove, sample_prior = TRUE,
                         iter = iter, control = control)
 fit_SMD_post_ove
 (hyp_SMD_post_ove <- hypothesis(fit_SMD_post_ove, "intercept = 0"))
@@ -84,7 +84,7 @@ plot(hyp_SMD_post_ove)
 p_value(fit_SMD_post_ove)
 
 fit_SMCR_ove <- brm(SMCR | se(sqrt(vSMCR)) ~ 0 + intercept  + (1|study), 
-                    data = tdata, prior = prior_ove, sample_prior = TRUE,
+                    data = ove_data, prior = prior_ove, sample_prior = TRUE,
                     iter = iter, control = control)
 fit_SMCR_ove
 (hyp_SMCR_ove <- hypothesis(fit_SMCR_ove, "intercept = 0"))
@@ -193,53 +193,3 @@ for (i in seq_along(study_names)) {
                            autocor = cor_fixed(sub_V_SMCR),
                            control = control)
 }
-
-# ---------------- publication bias ----------------
-library(metafor)
-tiff("symptoms_funnel_plots.tif", height=1100, width=850)
-dcex <- 2
-par(mfrow=c(4, 2), mar = c(5, 5, 2, 2) + 0.1)
-# positive
-funnel(rma_SMD_pos <- rma(SMD_post ~ 1, vi = vSMD_post,
-                          data = subset(sdata, sympType == "positive")), 
-       xlab = "Positive symptoms: SMD", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMD_pos, estimator = "L0")
-funnel(rma_SMCR_pos <- rma(SMCR ~ 1, vi = vSMCR,
-                           data = subset(sdata, sympType == "positive")), 
-       xlab = "Positive symptoms: SCMR", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMCR_pos, estimator = "L0")
-# negative
-funnel(rma_SMD_neg <- rma(SMD_post ~ 1, vi = vSMD_post,
-                          data = subset(sdata, sympType == "negative")), 
-       xlab = "Negative symptoms: SMD", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMD_neg, estimator = "L0")
-funnel(rma_SMCR_neg <- rma(SMCR ~ 1, vi = vSMCR,
-                           data = subset(sdata, sympType == "negative")), 
-       xlab = "Negative symptoms: SCMR", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMCR_neg, estimator = "L0")
-# general
-funnel(rma_SMD_gen <- rma(SMD_post ~ 1, vi = vSMD_post,
-                          data = subset(sdata, sympType == "general")), 
-       xlab = "General symptoms: SMD", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMD_gen, estimator = "L0")
-funnel(rma_SMCR_gen <- rma(SMCR ~ 1, vi = vSMCR,
-                           data = subset(sdata, sympType == "general")), 
-       xlab = "General symptoms: SCMR", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMCR_gen, estimator = "L0")
-# overall
-funnel(rma_SMD_ove <- rma(SMD_post ~ 1, vi = vSMD_post, data = tdata), 
-       xlab = "Overall symptoms: SMD", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMD_ove, estimator = "L0")
-funnel(rma_SMCR_ove <- rma(SMCR ~ 1, vi = vSMCR, data = tdata), 
-       xlab = "General symptoms: SCMR", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMCR_ove, estimator = "L0")
-par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
-dev.off()

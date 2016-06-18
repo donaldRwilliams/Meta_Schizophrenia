@@ -1,5 +1,6 @@
 adata <- read.csv2("data/symptoms.csv")
 adata$obs <- 1:nrow(adata)
+adata$study <- paste0(adata$name, " et al., ", adata$year)
 
 library(metafor)
 # Hedges'g estimates
@@ -29,7 +30,10 @@ adata$vSMCR <- adata$voxySMCR + adata$vplaSMCR
 
 # split up the data frame
 sdata <- droplevels(subset(adata, sympType != "overall"))
-tdata <- droplevels(subset(adata, sympType == "overall"))
+pos_data <- droplevels(subset(sdata, sympType == "positive"))
+neg_data <- droplevels(subset(sdata, sympType == "negative"))
+gen_data <- droplevels(subset(sdata, sympType == "general"))
+ove_data <- droplevels(subset(adata, sympType == "overall"))
 
 # compute covariance matrix of the effect sizes
 cov_matrix <- function(study_id, out_id, v, R, na.rm = FALSE) {

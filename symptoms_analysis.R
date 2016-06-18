@@ -45,7 +45,7 @@ theme_set(theme_bw())
 
 # ---------------- primary (multivariate) meta-analysis ----------------
 ## SMD
-fit_SMD_post <- brm(SMD_post ~ 0 + sympType + (0+sympType|study), 
+fit_SMD_post <- brm(SMD_post ~ 0 + sympType + (0+sympType || study), 
                     data = sdata, autocor = cor_fixed(V_SMD_post), 
                     prior = prior, sample_prior = TRUE, iter = iter,
                     control = control)
@@ -57,9 +57,15 @@ p_value(fit_SMD_post)
 marginal_effects(fit_SMD_post)
 plot(marginal_effects(fit_SMD_post, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
+### compare symptom types
+hyp_SMD_post2 <- hypothesis(fit_SMD_post, c("sympTypepositive - sympTypenegative = 0",
+                                            "sympTypepositive - sympTypegeneral = 0",
+                                            "sympTypenegative - sympTypegeneral = 0"))
+print(hyp_SMD_post2, chars = NULL)
+plot(hyp_SMD_post2)
 
 ## SMCR
-fit_SMCR <- brm(SMCR ~ 0 + sympType + (0+sympType|study), data = sdata,
+fit_SMCR <- brm(SMCR ~ 0 + sympType + (0+sympType || study), data = sdata,
                 autocor = cor_fixed(V_SMCR), prior = prior,
                 sample_prior = TRUE, iter = iter, control = control)
 fit_SMCR
@@ -70,6 +76,12 @@ p_value(fit_SMCR)
 marginal_effects(fit_SMCR)
 plot(marginal_effects(fit_SMCR, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
+### compare symptom types
+hyp_SMCR2 <- hypothesis(fit_SMCR, c("sympTypepositive - sympTypenegative = 0",
+                                    "sympTypepositive - sympTypegeneral = 0",
+                                    "sympTypenegative - sympTypegeneral = 0"))
+print(hyp_SMCR2, chars = NULL)
+plot(hyp_SMCR2)
 
 
 # ---------------- analysis of overall symptoms ---------------- 
@@ -95,7 +107,7 @@ p_value(fit_SMCR_ove)
 # ---------------- moderator analyses ---------------- 
 ## assuming the same effects across symptom types
 ## SMD
-fit_SMD_oxyAge <- brm(SMD_post ~ 0 + sympType + oxyAge + (0+sympType|study), 
+fit_SMD_oxyAge <- brm(SMD_post ~ 0 + sympType + oxyAge + (0+sympType||study), 
                       data = sdata, autocor = cor_fixed(V_SMD_post), 
                       prior = prior, sample_prior = TRUE, iter = iter,
                       control = control)
@@ -134,7 +146,7 @@ fit_SMD_admin_int <- update(fit_SMD_oxyAge, formula. = ~ . + admin_int - oxyAge,
 fit_SMD_admin_int
 
 # SMCR
-fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType|study), 
+fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType||study), 
                       data = sdata, autocor = cor_fixed(V_SMCR), 
                       prior = prior, sample_prior = TRUE, iter = iter,
                       control = control)

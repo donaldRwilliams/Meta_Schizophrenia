@@ -112,38 +112,47 @@ fit_SMD_oxyAge <- brm(SMD_post ~ 0 + sympType + oxyAge + (0+sympType||study),
                       prior = prior, sample_prior = TRUE, iter = iter,
                       control = control)
 fit_SMD_oxyAge
+p_value(fit_SMD_oxyAge)
 
 fit_SMD_plaAge <- update(fit_SMD_oxyAge, formula. = ~ . + plaAge - oxyAge,
                          newdata = sdata, control = control)
 fit_SMD_plaAge
+p_value(fit_SMD_plaAge)
 
 fit_SMD_oxyMale <- update(fit_SMD_oxyAge, formula. = ~ . + oxyMale - oxyAge,
                           newdata = sdata, control = control)
 fit_SMD_oxyMale
+p_value(fit_SMD_oxyMale)
 
 fit_SMD_plaMale <- update(fit_SMD_oxyAge, formula. = ~ . + plaMale - oxyAge,
                           newdata = sdata, control = control)
 fit_SMD_plaMale
-
-fit_SMD_training <- update(fit_SMD_oxyAge, formula. = ~ . + training - oxyAge,
-                           newdata = sdata, control = control)
-fit_SMD_training
+p_value(fit_SMD_plaMale)
 
 fit_SMD_duration <- update(fit_SMD_oxyAge, formula. = ~ . + duration - oxyAge,
                            newdata = sdata, control = control)
 fit_SMD_duration
-
-fit_SMD_dailyDose <- update(fit_SMD_oxyAge, formula. = ~ . + dailyDose - oxyAge,
-                            newdata = sdata, control = control)
-fit_SMD_dailyDose
+p_value(fit_SMD_duration)
 
 fit_SMD_eachDose <- update(fit_SMD_oxyAge, formula. = ~ . + eachDose - oxyAge,
                            newdata = sdata, control = control)
 fit_SMD_eachDose
+p_value(fit_SMD_eachDose)
+
+fit_SMD_ <- update(fit_SMD_oxyAge, formula. = ~ . + dailyDose - oxyAge,
+                   newdata = sdata, control = control)
+fit_SMD_dailyDose
+p_value(fit_SMD_dailyDose)
 
 fit_SMD_admin_int <- update(fit_SMD_oxyAge, formula. = ~ . + admin_int - oxyAge,
                             newdata = sdata, control = control)
 fit_SMD_admin_int
+marginal_effects(fit_SMD_admin_int)
+
+fit_SMD_training <- update(fit_SMD_oxyAge, formula. = ~ . + training - oxyAge,
+                           newdata = sdata, control = control)
+fit_SMD_training
+p_value(fit_SMD_training)
 
 # SMCR
 fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType||study), 
@@ -151,42 +160,51 @@ fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType||study),
                       prior = prior, sample_prior = TRUE, iter = iter,
                       control = control)
 fit_SMCR_oxyAge
+p_value(fit_SMCR_oxyAge)
 
 fit_SMCR_plaAge <- update(fit_SMCR_oxyAge, formula. = ~ . + plaAge - oxyAge,
                           newdata = sdata, control = control)
 fit_SMCR_plaAge
+p_value(fit_SMCR_plaAge)
 
 fit_SMCR_oxyMale <- update(fit_SMCR_oxyAge, formula. = ~ . + oxyMale - oxyAge,
                            newdata = sdata, control = control)
 fit_SMCR_oxyMale
+p_value(fit_SMCR_oxyMale)
 
 fit_SMCR_plaMale <- update(fit_SMCR_oxyAge, formula. = ~ . + plaMale - oxyAge,
                            newdata = sdata, control = control)
 fit_SMCR_plaMale
-
-fit_SMCR_training <- update(fit_SMCR_oxyAge, formula. = ~ . + training - oxyAge,
-                            newdata = sdata, control = control)
-fit_SMCR_training
+p_value(fit_SMCR_plaMale)
 
 fit_SMCR_duration <- update(fit_SMCR_oxyAge, formula. = ~ . + duration - oxyAge,
                             newdata = sdata, control = control)
 fit_SMCR_duration
-
-fit_SMCR_dailyDose <- update(fit_SMCR_oxyAge, formula. = ~ . + dailyDose - oxyAge,
-                             newdata = sdata, control = control)
-fit_SMCR_dailyDose
+p_value(fit_SMCR_duration)
 
 fit_SMCR_eachDose <- update(fit_SMCR_oxyAge, formula. = ~ . + eachDose - oxyAge,
                             newdata = sdata, control = control)
 fit_SMCR_eachDose
+p_value(fit_SMCR_eachDose)
+
+fit_SMCR_dailyDose <- update(fit_SMCR_oxyAge, formula. = ~ . + dailyDose - oxyAge,
+                             newdata = sdata, control = control)
+fit_SMCR_dailyDose
+p_value(fit_SMCR_dailyDose)
 
 fit_SMCR_admin_int <- update(fit_SMCR_oxyAge, formula. = ~ . + admin_int - oxyAge,
                              newdata = sdata, control = control)
 fit_SMCR_admin_int
+p_value(fit_SMCR_admin_int)
+
+fit_SMCR_training <- update(fit_SMCR_oxyAge, formula. = ~ . + training - oxyAge,
+                            newdata = sdata, control = control)
+fit_SMCR_training
+p_value(fit_SMCR_training)
 
 
 # ---------------- leave one out analysis ----------------
-study_names <- levels(sdata$study)
+study_names <- unique(sdata$study)
 fits_SMD_post <- fits_SMCR <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {

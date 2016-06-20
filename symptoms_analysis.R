@@ -205,3 +205,31 @@ for (i in seq_along(study_names)) {
                            autocor = cor_fixed(sub_V_SMCR),
                            control = control)
 }
+
+
+# ------------ study characteristics ----------
+udata <- sdata[!duplicated(sdata$name), ]
+summary(udata$plaN + udata$oxyN)
+## mean age
+sum_age_basis <- sum(udata$oxyN * udata$oxyAge + udata$plaN * udata$plaAge)
+sum_age_basis / sum(udata$oxyN + udata$plaN)
+## mean % males
+sum_male_basis <- sum(udata$oxyN * udata$oxyMale + udata$plaN * udata$plaMale)
+sum_male_basis / sum(udata$oxyN + udata$plaN)
+
+## prepare study characteristics table
+table1 <- adata[order(adata$name), ]
+to_format <- c("oxyMean_pre", "oxyMean_post", "oxySd_pre", "oxySd_post",
+               "plaMean_pre", "plaMean_post", "plaSd_pre", "plaSd_post")
+table1[, to_format] <- format(table1[, to_format], nsmall = 2, trim = TRUE)
+table1$N <- paste0("'", table1$oxyN, " / ", table1$plaN)
+table1$mean_pre <- paste0("'", table1$oxyMean_pre, " / ", table1$plaMean_pre)
+table1$SD_pre <- paste0("'", table1$oxySd_pre, " / ", table1$plaSd_pre)
+table1$mean_post <- paste0("'", table1$oxyMean_post, " / ", table1$plaMean_post)
+table1$SD_post <- paste0("'", table1$oxySd_post, " / ", table1$plaSd_post)
+table1$male <- paste(round(table1$oxyMale * 100), "% /", round(table1$plaMale * 100), "%")
+table1$age <- paste(round(table1$oxyAge, 1), "/", round(table1$plaAge, 1))
+table1 <- table1[, c("name", "year", "N", "age", "male", "sympType", 
+                    "mean_pre", "SD_pre", "mean_post", "SD_post")]
+write.table(table1, file = "table1.csv", dec = ",", sep = ";",
+            row.names = FALSE)

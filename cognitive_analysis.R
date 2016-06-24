@@ -49,7 +49,7 @@ fit_SMD_sg2 <- brm(SMD_post | se(sqrt(vSMD_post)) ~
 fit_SMD_sg2
 plot(fit_SMD_sg2, ask = FALSE)
 (hyp_SMD_sg2 <- hypothesis(fit_SMD_sg2, paste("SG2", sgs2, " = 0")))
-plot(hyp_SMD_sg2, chars = NULL, ask = FALSE)
+plot(hyp_SMD_sg2, chars = NULL, ask = FALSE, N = 6)
 marginal_effects(fit_SMD_sg2)
 
 fit_SMD_sg3 <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
@@ -59,7 +59,7 @@ fit_SMD_sg3 <- brm(SMD_post | se(sqrt(vSMD_post)) ~
                    iter = iter, control = control)
 fit_SMD_sg3
 plot(fit_SMD_sg3, ask = FALSE)
-(hyp_SMD_sg3 <- hypothesis(fit_SMD_sg3, paste("SG2", sgs3, " = 0")))
+(hyp_SMD_sg3 <- hypothesis(fit_SMD_sg3, paste("SG3", sgs3, " = 0")))
 plot(hyp_SMD_sg3, chars = NULL, ask = FALSE)
 marginal_effects(fit_SMD_sg3)
 
@@ -123,7 +123,7 @@ fit_SMCR_sg2 <- brm(SMCR | se(sqrt(vSMCR)) ~
                    iter = iter, control = control)
 fit_SMCR_sg2
 plot(fit_SMCR_sg2, ask = FALSE)
-(hyp_SMCR_sg2 <- hypothesis(fit_SMCR_sg2, paste("SG1", sgs2, " = 0")))
+(hyp_SMCR_sg2 <- hypothesis(fit_SMCR_sg2, paste("SG2", sgs2, " = 0")))
 plot(hyp_SMCR_sg2, chars = NULL, ask = FALSE)
 marginal_effects(fit_SMCR_sg2)
 
@@ -134,7 +134,7 @@ fit_SMCR_sg3 <- brm(SMCR | se(sqrt(vSMCR)) ~
                    iter = iter, control = control)
 fit_SMCR_sg3
 plot(fit_SMCR_sg3, ask = FALSE)
-(hyp_SMCR_sg3 <- hypothesis(fit_SMCR_sg3, paste("SG1", sgs3, " = 0")))
+(hyp_SMCR_sg3 <- hypothesis(fit_SMCR_sg3, paste("SG3", sgs3, " = 0")))
 plot(hyp_SMCR_sg3, chars = NULL, ask = FALSE)
 marginal_effects(fit_SMCR_sg3)
 
@@ -197,9 +197,9 @@ fits_SMD_post <- fits_SMCR <-
 for (i in seq_along(study_names)) {
   print(study_names[i])
   subdata <- droplevels(subset(cdata, study != study_names[i]))
-  fits_SMD_post[[i]] <- update(fit_SMD_post, newdata = subdata,
+  fits_SMD_post[[i]] <- update(fit_SMD_sg1, newdata = subdata,
                                control = control)
-  fits_SMCR[[i]] <- update(fit_SMCR, newdata = subdata,
+  fits_SMCR[[i]] <- update(fit_SMCR_sg1, newdata = subdata,
                            control = control)
 }
 fits_SMD_post

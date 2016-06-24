@@ -20,11 +20,21 @@ t_hom <- function(mean1, mean2, sd1, sd2, n1, n2) {
 
 # -------- checks related to Modabbernia et al. 2013 --------
 # positive symptoms
-sd_change(sd1 = 3.1, sd2 = 3.1, r = 0.8)  
+sd_change(sd1 = 3.1, sd2 = 3.1, r = 0.96)  
 # much greater than the sd_change = 0.9 reported for the placebo group...
 (dm <- d(mean1 = 3.3, mean2 = 0.7, sd1 = 3.1, sd2 = 0.9, n1 = 20, n2 = 20))
 2*sqrt(var_d(dm, 20, 20))
-t(mean1 = 3.3, mean2 = 0.7, sd1 = 3.1, sd2 = 0.9, n1 = 20, n2 = 20)
+t_hom(mean1 = 3.3, mean2 = 0.7, sd1 = 3.1, sd2 = 0.9, n1 = 20, n2 = 20)
+
+# overall symptoms
+r <- c(0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, 0.99)
+# oxytocin
+sd_change(sd1 = 6.7, sd2 = 6.7, r = r)
+# placebo
+sd_change(sd1 = 8.3, sd2 = 8.3, r = r)
+
+
+~
 
 
 # -------- checks related to Feifel et al. 2012 --------

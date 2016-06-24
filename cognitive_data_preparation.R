@@ -1,10 +1,12 @@
 cdata <- read.csv2("data/cognitive.csv")
+# remember to eclude social_func and syptoms from the complete excel sheet
+cdata <- droplevels(subset(cdata, SG1 %in% c("general_cog", "social_cog")))
 cdata$obs <- 1:nrow(cdata)
 # remove empty factor levels
-lvls2 <- levels(cdata$subgroup_2)
-cdata$subgroup_2 <- factor(cdata$subgroup_2, lvls2[nchar(lvls2) > 0L])
-lvls3 <- levels(cdata$subgroup_3)
-cdata$subgroup_3 <- factor(cdata$subgroup_3, lvls3[nchar(lvls3) > 0L])
+lvls2 <- levels(cdata$SG2)
+cdata$SG2 <- factor(cdata$SG2, lvls2[nchar(lvls2) > 0L])
+lvls3 <- levels(cdata$SG3)
+cdata$SG3 <- factor(cdata$SG3, lvls3[nchar(lvls3) > 0L])
 
 library(metafor)
 # Hedges'g estimates
@@ -47,9 +49,9 @@ sum_coding <- function(x, lvls = levels(x)) {
   colnames(contrasts(x)) <- lvls[-length(lvls)]
   x
 }
-cdata$subgroup_1 <- sum_coding(cdata$subgroup_1)
-cdata$subgroup_2 <- sum_coding(cdata$subgroup_2)
-cdata$subgroup_3 <- sum_coding(cdata$subgroup_3)
+cdata$SG1 <- sum_coding(cdata$SG1)
+cdata$SG2 <- sum_coding(cdata$SG2)
+cdata$SG3 <- sum_coding(cdata$SG3)
 
 # compute covariance matrix of the effect sizes
 cov_matrix2 <- function(study_id, v, r, na.rm = FALSE) {

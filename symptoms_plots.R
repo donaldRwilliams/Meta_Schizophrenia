@@ -26,16 +26,16 @@ cex.lab <- 2
 tiff("symptoms_forest_SMD.tif", height=1500, width=1000)
 # layout(matrix(1:4), heights = c(6, 8, 5, 7))
 par(mfrow = c(4, 1), cex = cex, mar = c(4, 2, 0, 2) + 0.1)
-forest(rma_SMD_pos, addfit = FALSE, xlab = "Positive Symptoms", 
-       cex.lab = cex.lab)
-text(-4.8, 7.5, "Authors, Year", cex = cex)
-text(2.8, 7.5, "SMD", cex = cex)
-text(4.0, 7.5, "[95%-CI]", cex = cex)
 forest(rma_SMD_neg, addfit = FALSE, xlab = "Negative symptoms",
        cex.lab = cex.lab)
 text(-3.8, 9.7, "Authors, Year", cex = cex)
 text(3.0, 9.7, "SMD", cex = cex)
 text(4, 9.7, "[95%-CI]", cex = cex)
+forest(rma_SMD_pos, addfit = FALSE, xlab = "Positive symptoms", 
+       cex.lab = cex.lab)
+text(-4.8, 7.5, "Authors, Year", cex = cex)
+text(2.8, 7.5, "SMD", cex = cex)
+text(4.0, 7.5, "[95%-CI]", cex = cex)
 forest(rma_SMD_gen, addfit = FALSE, xlab = "General psychopathology",
        cex.lab = cex.lab)
 text(-4, 6.5, "Authors, Year", cex = cex)
@@ -52,16 +52,16 @@ dev.off()
 tiff("symptoms_forest_SMCR.tif", height=1500, width=1000)
 # layout(matrix(1:4), heights = c(6, 8, 5, 7))
 par(mfrow = c(4, 1), cex = cex, mar = c(4, 2, 0, 2) + 0.1)
-forest(rma_SMCR_pos, addfit = FALSE, xlab = "Positive Symptoms", 
-       cex.lab = cex.lab)
-text(-4.1, 7.5, "Authors, Year", cex = cex)
-text(2.6, 7.5, "SMCR", cex = cex)
-text(3.7, 7.5, "[95%-CI]", cex = cex)
 forest(rma_SMCR_neg, addfit = FALSE, xlab = "Negative symptoms",
        cex.lab = cex.lab)
 text(-3.9, 9.7, "Authors, Year", cex = cex)
 text(2.2, 9.7, "SMCR", cex = cex)
 text(3.3, 9.7, "[95%-CI]", cex = cex)
+forest(rma_SMCR_pos, addfit = FALSE, xlab = "Positive symptoms", 
+       cex.lab = cex.lab)
+text(-4.1, 7.5, "Authors, Year", cex = cex)
+text(2.6, 7.5, "SMCR", cex = cex)
+text(3.7, 7.5, "[95%-CI]", cex = cex)
 forest(rma_SMCR_gen, addfit = FALSE, xlab = "General psychopathology",
        cex.lab = cex.lab)
 text(-4, 6.5, "Authors, Year", cex = cex)
@@ -80,14 +80,14 @@ dev.off()
 tiff("symptoms_funnel_SMCR.tif", height=500, width=800)
 dcex <- 2
 par(mfrow=c(2, 2), mar = c(5, 5, 2, 2) + 0.1)
-# positive
-funnel(rma_SMCR_pos, xlab = "Positive symptoms", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMCR_pos, estimator = "L0")
 # negative
 funnel(rma_SMCR_neg, xlab = "Negative symptoms", cex = dcex, 
        cex.axis = dcex, cex.lab = dcex)
 trimfill(rma_SMCR_neg, estimator = "L0")
+# positive
+funnel(rma_SMCR_pos, xlab = "Positive symptoms", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMCR_pos, estimator = "L0")
 # general
 funnel(rma_SMCR_gen, xlab = "General psychopathology", cex = dcex, 
        cex.axis = dcex, cex.lab = dcex)
@@ -103,14 +103,14 @@ dev.off()
 tiff("symptoms_funnel_SMD.tif", height=500, width=800)
 dcex <- 2
 par(mfrow=c(2, 2), mar = c(5, 5, 2, 2) + 0.1)
-# positive
-funnel(rma_SMD_pos, xlab = "Positive symptoms", cex = dcex, 
-       cex.axis = dcex, cex.lab = dcex)
-trimfill(rma_SMD_pos, estimator = "L0")
 # negative
 funnel(rma_SMD_neg, xlab = "Negative symptoms", cex = dcex, 
        cex.axis = dcex, cex.lab = dcex)
 trimfill(rma_SMD_neg, estimator = "L0")
+# positive
+funnel(rma_SMD_pos, xlab = "Positive symptoms", cex = dcex, 
+       cex.axis = dcex, cex.lab = dcex)
+trimfill(rma_SMD_pos, estimator = "L0")
 # general
 funnel(rma_SMD_gen, xlab = "General psychopathology", cex = dcex, 
        cex.axis = dcex, cex.lab = dcex)

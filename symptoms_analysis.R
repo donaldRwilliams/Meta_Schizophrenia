@@ -58,9 +58,9 @@ marginal_effects(fit_SMD_post)
 plot(marginal_effects(fit_SMD_post, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
 ### compare symptom types
-hyp_SMD_post2 <- hypothesis(fit_SMD_post, c("sympTypepositive - sympTypenegative = 0",
-                                            "sympTypepositive - sympTypegeneral = 0",
-                                            "sympTypenegative - sympTypegeneral = 0"))
+hyp_SMD_post2 <- hypothesis(fit_SMD_post, c("sympTypenegative - sympTypepositive = 0",
+                                            "sympTypenegative - sympTypegeneral = 0",
+                                            "sympTypepositive - sympTypegeneral = 0"))
 print(hyp_SMD_post2, chars = NULL)
 plot(hyp_SMD_post2)
 
@@ -77,9 +77,9 @@ marginal_effects(fit_SMCR)
 plot(marginal_effects(fit_SMCR, conditions = conditions, 
                       re_formula = NULL), points = TRUE, ncol = 4)
 ### compare symptom types
-hyp_SMCR2 <- hypothesis(fit_SMCR, c("sympTypepositive - sympTypenegative = 0",
-                                    "sympTypepositive - sympTypegeneral = 0",
-                                    "sympTypenegative - sympTypegeneral = 0"))
+hyp_SMCR2 <- hypothesis(fit_SMCR, c("sympTypenegative - sympTypepositive = 0",
+                                    "sympTypenegative - sympTypegeneral = 0",
+                                    "sympTypepositive - sympTypegeneral = 0"))
 print(hyp_SMCR2, chars = NULL)
 plot(hyp_SMCR2)
 

@@ -2,7 +2,7 @@ adata <- read.csv2("data/symptoms.csv")
 adata$obs <- 1:nrow(adata)
 adata$study <- paste0(adata$name, " et al., ", adata$year)
 adata$sympType <- factor(adata$sympType, 
-  levels = c("positive", "negative", "general", "overall"))
+  levels = c("negative", "positive", "general", "overall"))
 
 library(metafor)
 # Hedges'g estimates

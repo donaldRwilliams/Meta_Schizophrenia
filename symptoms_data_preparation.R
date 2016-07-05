@@ -3,6 +3,7 @@ adata$obs <- 1:nrow(adata)
 adata$study <- paste0(adata$name, " et al., ", adata$year)
 adata$sympType <- factor(adata$sympType, 
   levels = c("negative", "positive", "general", "overall"))
+adata$country <- factor(ifelse(adata$country == "USA", "USA", "other"))
 
 library(metafor)
 # Hedges'g estimates

@@ -154,6 +154,11 @@ fit_SMD_training <- update(fit_SMD_oxyAge, formula. = ~ . + training - oxyAge,
 fit_SMD_training
 p_value(fit_SMD_training)
 
+fit_SMD_country <- update(fit_SMD_oxyAge, formula. = ~ . + country - oxyAge,
+                          newdata = sdata, control = control)
+fit_SMD_country
+p_value(fit_SMD_country)
+
 # SMCR
 fit_SMCR_oxyAge <- brm(SMCR ~ 0 + sympType + oxyAge + (0+sympType||study), 
                       data = sdata, autocor = cor_fixed(V_SMCR), 
@@ -201,6 +206,11 @@ fit_SMCR_training <- update(fit_SMCR_oxyAge, formula. = ~ . + training - oxyAge,
                             newdata = sdata, control = control)
 fit_SMCR_training
 p_value(fit_SMCR_training)
+
+fit_SMCR_country <- update(fit_SMCR_oxyAge, formula. = ~ . + country - oxyAge,
+                           newdata = sdata, control = control)
+fit_SMCR_country
+p_value(fit_SMCR_country)
 
 
 # ---------------- leave one out analysis ----------------

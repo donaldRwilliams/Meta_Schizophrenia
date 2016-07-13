@@ -2,6 +2,7 @@ cdata <- read.csv2("data/cognitive.csv")
 # remember to eclude social_func and syptoms from the complete excel sheet
 cdata <- droplevels(subset(cdata, SG1 %in% c("general_cog", "social_cog")))
 cdata$obs <- 1:nrow(cdata)
+cdata$study <- paste0(cdata$author, " et al. (", cdata$year, ")")
 # remove empty factor levels
 lvls2 <- levels(cdata$SG2)
 cdata$SG2 <- factor(cdata$SG2, lvls2[nchar(lvls2) > 0L])

@@ -1,8 +1,11 @@
 cdata <- read.csv2("data/cognitive.csv")
-# remember to eclude social_func and syptoms from the complete excel sheet
-cdata <- droplevels(subset(cdata, SG1 %in% c("general_cog", "social_cog")))
 cdata$obs <- 1:nrow(cdata)
-cdata$study <- paste0(cdata$author, " et al. (", cdata$year, ")")
+cdata$study <- paste0(cdata$author, " (", cdata$year, ")")
+cdata$country_simple <- factor(ifelse(cdata$country != "USA", "other", "USA"))
+
+# sort alphabetical after cognition type and study
+cdata <- cdata[order(cdata$SG1, cdata$study), ]
+
 # remove empty factor levels
 lvls2 <- levels(cdata$SG2)
 cdata$SG2 <- factor(cdata$SG2, lvls2[nchar(lvls2) > 0L])
@@ -56,3 +59,5 @@ cdata$SG3 <- sum_coding(cdata$SG3)
 
 scdata <- droplevels(subset(cdata, SG1 == "social_cog"))
 gcdata <- droplevels(subset(cdata, SG1 == "general_cog"))
+ercdata <- droplevels(subset(cdata, SG2 == "emotionRec"))
+ercdata$fear <- factor(ifelse(ercdata$SG3 != "fear", "other", "fear"))

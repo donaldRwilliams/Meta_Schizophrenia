@@ -32,7 +32,7 @@ library(brms)
 prior <- c(set_prior("normal(0,0.5)", coef = "intercept"),
            set_prior("cauchy(0,0.3)", class = "sd"))
 prior_sg2a3 <- c(set_prior("normal(0,0.5)"),
-                 set_prior("cauchy(0,0.2)", class = "sd"))
+                 set_prior("cauchy(0,0.3)", class = "sd"))
 iter <- 5000
 options(mc.cores = 2)
 control <- list(adapt_delta = 0.95)
@@ -160,13 +160,13 @@ plot(marginal_effects(fit_SMD_duration), points = TRUE)
 fit_SMD_dailyDose <- update(fit_SMD_oxyAge, 
                             formula. = ~ . - oxyAge + dailyDose,
                             newdata = scdata, control = control)
-fit_SMD_dailyDose
+print(fit_SMD_dailyDose, 4)
 p_value(fit_SMD_dailyDose)
 
 fit_SMD_eachDose <- update(fit_SMD_oxyAge, 
                            formula. = ~ . - oxyAge + eachDose,
                            newdata = scdata, control = control)
-fit_SMD_eachDose
+print(fit_SMD_eachDose, 4)
 p_value(fit_SMD_eachDose)
 
 fit_SMD_admin_int <- update(fit_SMD_oxyAge, 
@@ -174,6 +174,20 @@ fit_SMD_admin_int <- update(fit_SMD_oxyAge,
                             newdata = scdata, control = control)
 fit_SMD_admin_int
 p_value(fit_SMD_admin_int)
+
+fit_SMD_country <- update(fit_SMD_oxyAge, 
+                            formula. = ~ . - oxyAge + country_simple,
+                            newdata = scdata, control = control)
+fit_SMD_country
+p_value(fit_SMD_country)
+
+# special moderator analysis for emotion recognition of fear
+fit_SMD_fear <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+                       0 + intercept + fear + (1|study) + (1|obs), 
+                     data = ercdata, prior = prior, sample_prior = TRUE,
+                     iter = iter, control = control)
+fit_SMD_fear
+p_value(fit_SMD_fear)
 
 ## SMCR
 fit_SMCR_sg2 <- brm(SMCR | se(sqrt(vSMCR)) ~ 
@@ -260,25 +274,38 @@ fit_SMCR_admin_int <- update(fit_SMCR_oxyAge,
 fit_SMCR_admin_int
 p_value(fit_SMCR_admin_int)
 
+fit_SMCR_country <- update(fit_SMCR_oxyAge, 
+                           formula. = ~ . - oxyAge + country_simple,
+                           newdata = scdata, control = control)
+fit_SMCR_country
+p_value(fit_SMCR_country)
+
+# special moderator analysis for emotion recognition of fear
+fit_SMCR_fear <- brm(SMCR | se(sqrt(vSMCR)) ~ 
+                         0 + intercept + fear + (1|study) + (1|obs), 
+                       data = ercdata, prior = prior, sample_prior = TRUE,
+                       iter = iter, control = control)
+fit_SMCR_fear
+p_value(fit_SMCR_fear)
 
 # ---------------- leave one out analysis ----------------
 ## social cognition
-study_names <- levels(scdata$study)
+study_names <- sort(unique(scdata$study))
 fits_SMD_social <- fits_SMCR_social <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {
   print(study_names[i])
   subdata <- droplevels(subset(scdata, study != study_names[i]))
   fits_SMD_social[[i]] <- update(fit_SMD_social, newdata = subdata,
-                               control = control)
+                                 control = control)
   fits_SMCR_social[[i]] <- update(fit_SMCR_social, newdata = subdata,
-                           control = control)
+                                  control = control)
 }
 fits_SMD_social
 fits_SMCR_social
 
 ## general cognition
-study_names <- levels(gcdata$study)
+study_names <- sort(unique(gcdata$study))
 fits_SMD_general <- fits_SMCR_general <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {
@@ -291,3 +318,37 @@ for (i in seq_along(study_names)) {
 }
 fits_SMD_general
 fits_SMCR_general
+
+
+# --------- study characteristics ---------------
+ucdata <- cdata[!duplicated(cdata$study), ]
+# number of patients
+N <- ifelse(ucdata$design == "crossover", ucdata$oxyN,
+            ucdata$oxyN + ucdata$plaN)
+range(N)  # Goldman et al. 2011 contains 2 separate samples
+sum(N)
+# range of daily dose
+range(ucdata$dailyDose)
+## mean age
+sum_age_basis <- sum(ucdata$oxyN * ucdata$oxyAge + ucdata$plaN * ucdata$plaAge)
+sum_age_basis / sum(ucdata$oxyN + ucdata$plaN)
+## mean % males
+sum_male_basis <- sum(ucdata$oxyN * ucdata$oxyMale + ucdata$plaN * ucdata$plaMale)
+sum_male_basis / sum(ucdata$oxyN + ucdata$plaN)
+
+## prepare study characteristics table
+table1 <- cdata
+to_format <- c("oxyMean_pre", "oxyMean_post", "oxySd_pre", "oxySd_post",
+               "plaMean_pre", "plaMean_post", "plaSd_pre", "plaSd_post")
+table1[, to_format] <- format(table1[, to_format], nsmall = 2, trim = TRUE)
+table1$N <- paste0("'", table1$oxyN, " / ", table1$plaN)
+table1$mean_pre <- paste0("'", table1$oxyMean_pre, " / ", table1$plaMean_pre)
+table1$SD_pre <- paste0("'", table1$oxySd_pre, " / ", table1$plaSd_pre)
+table1$mean_post <- paste0("'", table1$oxyMean_post, " / ", table1$plaMean_post)
+table1$SD_post <- paste0("'", table1$oxySd_post, " / ", table1$plaSd_post)
+table1$male <- paste(round(table1$oxyMale * 100), "% /", round(table1$plaMale * 100), "%")
+table1$age <- paste(round(table1$oxyAge, 1), "/", round(table1$plaAge, 1))
+table1 <- table1[, c("SG1", "study", "country", "N", "age", "male", "dailyDose",
+                     "outcome", "mean_pre", "SD_pre", "mean_post", "SD_post")]
+write.table(table1, file = "table1.csv", dec = ",", sep = ";",
+            row.names = FALSE)

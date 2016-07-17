@@ -16,9 +16,9 @@ tiff("forest_SMD_social.tif", height=1600, width=1000)
 forest(rma_SMD_social, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = 1.2,
        slab = study_names_social)
-text(-6.7, 74, "Authors (Year)", cex = cex)
-text(5.7, 74, "SMD", cex = cex)
-text(6.8, 74, "[95%-CI]", cex = cex)
+text(-6.3, 74, "Authors (Year)", cex = cex)
+text(5.0, 74, "SMD", cex = cex)
+text(6.0, 74, "[95%-CI]", cex = cex)
 dev.off()
 
 ## general cognition

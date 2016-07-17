@@ -41,7 +41,7 @@ theme_set(theme_bw())
 # ---------- primary meta-analysis ----------------
 ## social cognition
 ### SMD
-fit_SMD_social <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_social <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + (1|study) + (1|obs), 
                       data = scdata, prior = prior, sample_prior = TRUE,
                       iter = iter, control = control)
@@ -64,7 +64,7 @@ p_value(fit_SMCR_social)
 
 ## general cognition
 ### SMD
-fit_SMD_general <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_general <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + (1|study) + (1|obs), 
                       data = gcdata, prior = prior, sample_prior = TRUE,
                       iter = iter, control = control)
@@ -91,7 +91,7 @@ sgs2 <- levels(scdata$SG2)
 sgs3 <- levels(scdata$SG3)
 
 ## SMD
-fit_SMD_sg2 <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_sg2 <- brm(SMD | se(sqrt(vSMD)) ~ 
                      0 + SG2 + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
                    sample_prior = TRUE,
@@ -103,7 +103,7 @@ plot(hyp_SMD_sg2, chars = NULL, ask = FALSE, N = 6)
 p_value(fit_SMD_sg2)
 marginal_effects(fit_SMD_sg2)
 
-fit_SMD_sg3 <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_sg3 <- brm(SMD | se(sqrt(vSMD)) ~ 
                      0 + SG3 + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
                    sample_prior = TRUE,
@@ -116,7 +116,7 @@ p_value(fit_SMD_sg3)
 marginal_effects(fit_SMD_sg3)
 
 ### other moderators
-fit_SMD_oxyAge <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_oxyAge <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + oxyAge + (1|study) + (1|obs), 
                       data = scdata, prior = prior, sample_prior = TRUE,
                       iter = iter, control = control)
@@ -182,7 +182,7 @@ fit_SMD_country
 p_value(fit_SMD_country)
 
 # special moderator analysis for emotion recognition of fear
-fit_SMD_fear <- brm(SMD_post | se(sqrt(vSMD_post)) ~ 
+fit_SMD_fear <- brm(SMD | se(sqrt(vSMD)) ~ 
                        0 + intercept + fear + (1|study) + (1|obs), 
                      data = ercdata, prior = prior, sample_prior = TRUE,
                      iter = iter, control = control)

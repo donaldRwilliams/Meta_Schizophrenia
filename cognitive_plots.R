@@ -28,9 +28,9 @@ tiff("forest_SMD_general.tif", height=400, width=1000)
 forest(rma_SMD_general, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = cex, alim = c(-2, 2),
        slab = study_names_general)
-text(-2.75, 13, "Authors (Year)", cex = cex)
-text(2.35, 13, "SMD", cex = cex)
-text(2.85, 13, "[95%-CI]", cex = cex)
+text(-2.5, 13, "Authors (Year)", cex = cex)
+text(2, 13, "SMD", cex = cex)
+text(2.45, 13, "[95%-CI]", cex = cex)
 dev.off()
 
 

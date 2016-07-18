@@ -1,13 +1,8 @@
-cdata <- read.csv2("data/cognitive.csv")
+cdata <- read.csv2("data/cognitive.csv", na.strings = c("NA", ""))
 cdata$obs <- 1:nrow(cdata)
 cdata$study <- paste0(cdata$author, " (", cdata$year, ")")
 cdata$country_simple <- factor(ifelse(cdata$country != "USA", "other", "USA"))
-
-# remove empty factor levels
-lvls2 <- levels(cdata$SG2)
-cdata$SG2 <- factor(cdata$SG2, lvls2[nchar(lvls2) > 0L])
-lvls3 <- levels(cdata$SG3)
-cdata$SG3 <- factor(cdata$SG3, lvls3[nchar(lvls3) > 0L])
+cdata$level <- relevel(cdata$level, "low_level")
 
 library(metafor)
 # Hedges'g estimates
@@ -65,9 +60,9 @@ sum_coding <- function(x, lvls = levels(x)) {
 }
 cdata$SG1 <- sum_coding(cdata$SG1)
 cdata$SG2 <- sum_coding(cdata$SG2)
-cdata$SG3 <- sum_coding(cdata$SG3)
+cdata$emotion <- sum_coding(cdata$emotion)
 
 scdata <- droplevels(subset(cdata, SG1 == "social_cog"))
 ncdata <- droplevels(subset(cdata, SG1 == "neurocognition"))
 ercdata <- droplevels(subset(cdata, SG2 == "emotionRec"))
-ercdata$fear <- factor(ifelse(ercdata$SG3 != "fear", "other", "fear"))
+ercdata$fear <- factor(ifelse(ercdata$emotion != "fear", "other", "fear"))

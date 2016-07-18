@@ -62,7 +62,7 @@ plot(fit_SMCR_social, ask = FALSE)
 plot(hyp_SMCR_social, chars = NULL, ask = FALSE)
 p_value(fit_SMCR_social)
 
-## neuro cognition
+## neurocognition
 ### SMD
 fit_SMD_neuro <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + (1|study) + (1|obs), 
@@ -85,12 +85,14 @@ plot(fit_SMCR_neuro, ask = FALSE)
 plot(hyp_SMCR_neuro, chars = NULL, ask = FALSE)
 p_value(fit_SMCR_neuro)
 
+
 # ------- moderator analysis ------
 # only for social cognition data
-sgs2 <- levels(scdata$SG2)
-sgs3 <- levels(scdata$SG3)
+lSG2 <- levels(scdata$SG2)
+lemotion <- levels(scdata$emotion)
 
 ## SMD
+### cell mean coded moderators
 fit_SMD_sg2 <- brm(SMD | se(sqrt(vSMD)) ~ 
                      0 + SG2 + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
@@ -98,24 +100,25 @@ fit_SMD_sg2 <- brm(SMD | se(sqrt(vSMD)) ~
                    iter = iter, control = control)
 fit_SMD_sg2
 plot(fit_SMD_sg2, ask = FALSE)
-(hyp_SMD_sg2 <- hypothesis(fit_SMD_sg2, paste("SG2", sgs2, " = 0")))
+(hyp_SMD_sg2 <- hypothesis(fit_SMD_sg2, paste("SG2", lSG2, " = 0")))
 plot(hyp_SMD_sg2, chars = NULL, ask = FALSE, N = 6)
 p_value(fit_SMD_sg2)
 marginal_effects(fit_SMD_sg2)
 
-fit_SMD_sg3 <- brm(SMD | se(sqrt(vSMD)) ~ 
-                     0 + SG3 + (1|study) + (1|obs), 
+fit_SMD_emotion <- brm(SMD | se(sqrt(vSMD)) ~ 
+                     0 + emotion + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
                    sample_prior = TRUE,
                    iter = iter, control = control)
-fit_SMD_sg3
-plot(fit_SMD_sg3, ask = FALSE)
-(hyp_SMD_sg3 <- hypothesis(fit_SMD_sg3, paste("SG3", sgs3, " = 0")))
-plot(hyp_SMD_sg3, chars = NULL, ask = FALSE)
-p_value(fit_SMD_sg3)
-marginal_effects(fit_SMD_sg3)
+fit_SMD_emotion
+plot(fit_SMD_emotion, ask = FALSE)
+(hyp_SMD_emotion <- hypothesis(fit_SMD_emotion, 
+                               paste("emotion", lemotion, " = 0")))
+plot(hyp_SMD_emotion, chars = NULL, ask = FALSE)
+p_value(fit_SMD_emotion)
+marginal_effects(fit_SMD_emotion)
 
-### other moderators
+### other moderators 
 fit_SMD_oxyAge <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + oxyAge + (1|study) + (1|obs), 
                       data = scdata, prior = prior, sample_prior = TRUE,
@@ -176,12 +179,19 @@ fit_SMD_admin_int
 p_value(fit_SMD_admin_int)
 
 fit_SMD_country <- update(fit_SMD_oxyAge, 
-                            formula. = ~ . - oxyAge + country_simple,
-                            newdata = scdata, control = control)
+                          formula. = ~ . - oxyAge + country_simple,
+                          newdata = scdata, control = control)
 fit_SMD_country
 p_value(fit_SMD_country)
 
-# special moderator analysis for emotion recognition of fear
+fit_SMD_level <- update(fit_SMD_oxyAge, 
+                        formula. = ~ . - oxyAge + level,
+                        newdata = scdata, control = control)
+fit_SMD_level
+p_value(fit_SMD_level)
+plot(marginal_effects(fit_SMD_level), points = TRUE)
+
+### special moderator analysis for emotion recognition of fear
 fit_SMD_fear <- brm(SMD | se(sqrt(vSMD)) ~ 
                        0 + intercept + fear + (1|study) + (1|obs), 
                      data = ercdata, prior = prior, sample_prior = TRUE,
@@ -190,6 +200,7 @@ fit_SMD_fear
 p_value(fit_SMD_fear)
 
 ## SMCR
+### cell mean coded moderators
 fit_SMCR_sg2 <- brm(SMCR | se(sqrt(vSMCR)) ~ 
                      0 + SG2 + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
@@ -197,22 +208,23 @@ fit_SMCR_sg2 <- brm(SMCR | se(sqrt(vSMCR)) ~
                    iter = iter, control = control)
 fit_SMCR_sg2
 plot(fit_SMCR_sg2, ask = FALSE)
-(hyp_SMCR_sg2 <- hypothesis(fit_SMCR_sg2, paste("SG2", sgs2, " = 0")))
+(hyp_SMCR_sg2 <- hypothesis(fit_SMCR_sg2, paste("SG2", lSG2, " = 0")))
 plot(hyp_SMCR_sg2, chars = NULL, ask = FALSE)
 p_value(fit_SMCR_sg2)
 marginal_effects(fit_SMCR_sg2)
 
-fit_SMCR_sg3 <- brm(SMCR | se(sqrt(vSMCR)) ~ 
-                     0 + SG3 + (1|study) + (1|obs), 
+fit_SMCR_emotion <- brm(SMCR | se(sqrt(vSMCR)) ~ 
+                     0 + emotion + (1|study) + (1|obs), 
                    data = scdata, prior = prior_sg2a3, 
                    sample_prior = TRUE,
                    iter = iter, control = control)
-fit_SMCR_sg3
-plot(fit_SMCR_sg3, ask = FALSE)
-(hyp_SMCR_sg3 <- hypothesis(fit_SMCR_sg3, paste("SG3", sgs3, " = 0")))
-plot(hyp_SMCR_sg3, chars = NULL, ask = FALSE)
-p_value(fit_SMCR_sg3)
-marginal_effects(fit_SMCR_sg3)
+fit_SMCR_emotion
+plot(fit_SMCR_emotion, ask = FALSE)
+(hyp_SMCR_emotion <- hypothesis(fit_SMCR_emotion, 
+                                paste("emotion", lemotion, " = 0")))
+plot(hyp_SMCR_emotion, chars = NULL, ask = FALSE)
+p_value(fit_SMCR_emotion)
+marginal_effects(fit_SMCR_emotion)
 
 ### other moderators
 fit_SMCR_oxyAge <- brm(SMCR | se(sqrt(vSMCR)) ~ 
@@ -280,13 +292,20 @@ fit_SMCR_country <- update(fit_SMCR_oxyAge,
 fit_SMCR_country
 p_value(fit_SMCR_country)
 
-# special moderator analysis for emotion recognition of fear
+fit_SMCR_level <- update(fit_SMCR_oxyAge, 
+                         formula. = ~ . - oxyAge + level,
+                         newdata = scdata, control = control)
+fit_SMCR_level
+p_value(fit_SMCR_level)
+
+### special moderator analysis for emotion recognition of fear
 fit_SMCR_fear <- brm(SMCR | se(sqrt(vSMCR)) ~ 
                          0 + intercept + fear + (1|study) + (1|obs), 
                        data = ercdata, prior = prior, sample_prior = TRUE,
                        iter = iter, control = control)
 fit_SMCR_fear
 p_value(fit_SMCR_fear)
+
 
 # ---------------- leave one out analysis ----------------
 ## social cognition

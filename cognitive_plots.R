@@ -1,9 +1,9 @@
 # ------- metafor models used in the plots -------
 library(metafor)
-rma_SMD_social <- rma(SMD_post ~ 1, vi = vSMD_post, data = scdata)
+rma_SMD_social <- rma(SMD ~ 1, vi = vSMD, data = scdata)
 rma_SMCR_social <- rma(SMCR ~ 1, vi = vSMCR, data = scdata)
-rma_SMD_general <- rma(SMD_post ~ 1, vi = vSMD_post, data = gcdata)
-rma_SMCR_general <- rma(SMCR ~ 1, vi = vSMCR, data = gcdata)
+rma_SMD_neuro <- rma(SMD ~ 1, vi = vSMD, data = ncdata)
+rma_SMCR_neuro <- rma(SMCR ~ 1, vi = vSMCR, data = ncdata)
 
 # ------- forest plots ---------
 cex <- 1.4
@@ -21,13 +21,13 @@ text(5.0, 74, "SMD", cex = cex)
 text(6.0, 74, "[95%-CI]", cex = cex)
 dev.off()
 
-## general cognition
-study_names_general <- ifelse(duplicated(gcdata$study), "", 
-                              as.character(gcdata$study))
-tiff("forest_SMD_general.tif", height=400, width=1000)
-forest(rma_SMD_general, addfit = FALSE, xlab = "SMD", 
+## neuro cognition
+study_names_neuro <- ifelse(duplicated(ncdata$study), "", 
+                              as.character(ncdata$study))
+tiff("forest_SMD_neuro.tif", height=400, width=1000)
+forest(rma_SMD_neuro, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = cex, alim = c(-2, 2),
-       slab = study_names_general)
+       slab = study_names_neuro)
 text(-2.5, 13, "Authors (Year)", cex = cex)
 text(2, 13, "SMD", cex = cex)
 text(2.45, 13, "[95%-CI]", cex = cex)
@@ -39,22 +39,22 @@ tiff("cognitive_funnel_plots.tif", height=550, width=850)
 dcex <- 2
 par(mfrow=c(2, 2), mar = c(5, 5, 2, 2) + 0.1)
 # social_cog
-funnel(rma_SMD_social, xlab = "Social cognitions: SMD", 
+funnel(rma_SMD_social, xlab = "Social cognition: SMD", 
        cex = dcex, cex.axis = dcex, cex.lab = dcex)
 regtest(rma_SMD_social, model = "lm", predictor = "sei")
 trimfill(rma_SMD_social, estimator = "R0")
-funnel(rma_SMCR_social, xlab = "Social cognitions: SCMR", 
+funnel(rma_SMCR_social, xlab = "Social cognition: SCMR", 
        cex = dcex, cex.axis = dcex, cex.lab = dcex)
 regtest(rma_SMCR_social, model = "lm", predictor = "sei")
 trimfill(rma_SMCR_social, estimator = "R0")
-# general_cog
-funnel(rma_SMD_general, xlab = "General cognitions: SMD", 
+# neuro_cog
+funnel(rma_SMD_neuro, xlab = "Neurocognition: SMD", 
        cex = dcex, cex.axis = dcex, cex.lab = dcex)
-regtest(rma_SMD_general, model = "lm", predictor = "sei")
-trimfill(rma_SMD_general, estimator = "R0")
-funnel(rma_SMCR_general, xlab = "General cognitions: SCMR", 
+regtest(rma_SMD_neuro, model = "lm", predictor = "sei")
+trimfill(rma_SMD_neuro, estimator = "R0")
+funnel(rma_SMCR_neuro, xlab = "Neurocognition: SCMR", 
        cex = dcex, cex.axis = dcex, cex.lab = dcex)
-regtest(rma_SMCR_General, model = "lm", predictor = "sei")
-trimfill(rma_SMCR_general, estimator = "R0")
+regtest(rma_SMCR_neuro, model = "lm", predictor = "sei")
+trimfill(rma_SMCR_neuro, estimator = "R0")
 par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
 dev.off()

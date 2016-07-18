@@ -62,28 +62,28 @@ plot(fit_SMCR_social, ask = FALSE)
 plot(hyp_SMCR_social, chars = NULL, ask = FALSE)
 p_value(fit_SMCR_social)
 
-## general cognition
+## neuro cognition
 ### SMD
-fit_SMD_general <- brm(SMD | se(sqrt(vSMD)) ~ 
+fit_SMD_neuro <- brm(SMD | se(sqrt(vSMD)) ~ 
                         0 + intercept + (1|study) + (1|obs), 
-                      data = gcdata, prior = prior, sample_prior = TRUE,
+                      data = ncdata, prior = prior, sample_prior = TRUE,
                       iter = iter, control = control)
-fit_SMD_general
-plot(fit_SMD_general, ask = FALSE)
-(hyp_SMD_general <- hypothesis(fit_SMD_general, "intercept = 0"))
-plot(hyp_SMD_general, chars = NULL, ask = FALSE)
-p_value(fit_SMD_general)
+fit_SMD_neuro
+plot(fit_SMD_neuro, ask = FALSE)
+(hyp_SMD_neuro <- hypothesis(fit_SMD_neuro, "intercept = 0"))
+plot(hyp_SMD_neuro, chars = NULL, ask = FALSE)
+p_value(fit_SMD_neuro)
 
 ### SMCR
-fit_SMCR_general <- brm(SMCR | se(sqrt(vSMCR)) ~ 
+fit_SMCR_neuro <- brm(SMCR | se(sqrt(vSMCR)) ~ 
                          0 + intercept + (1|study) + (1|obs), 
-                       data = gcdata, prior = prior, sample_prior = TRUE,
+                       data = ncdata, prior = prior, sample_prior = TRUE,
                        iter = iter, control = control)
-fit_SMCR_general
-plot(fit_SMCR_general, ask = FALSE)
-(hyp_SMCR_general <- hypothesis(fit_SMCR_general, "intercept = 0"))
-plot(hyp_SMCR_general, chars = NULL, ask = FALSE)
-p_value(fit_SMCR_general)
+fit_SMCR_neuro
+plot(fit_SMCR_neuro, ask = FALSE)
+(hyp_SMCR_neuro <- hypothesis(fit_SMCR_neuro, "intercept = 0"))
+plot(hyp_SMCR_neuro, chars = NULL, ask = FALSE)
+p_value(fit_SMCR_neuro)
 
 # ------- moderator analysis ------
 # only for social cognition data
@@ -157,17 +157,17 @@ print(fit_SMD_duration, 4)
 p_value(fit_SMD_duration)
 plot(marginal_effects(fit_SMD_duration), points = TRUE)
 
-fit_SMD_dailyDose <- update(fit_SMD_oxyAge, 
-                            formula. = ~ . - oxyAge + dailyDose,
-                            newdata = scdata, control = control)
-print(fit_SMD_dailyDose, 4)
-p_value(fit_SMD_dailyDose)
-
 fit_SMD_eachDose <- update(fit_SMD_oxyAge, 
                            formula. = ~ . - oxyAge + eachDose,
                            newdata = scdata, control = control)
 print(fit_SMD_eachDose, 4)
 p_value(fit_SMD_eachDose)
+
+fit_SMD_dailyDose <- update(fit_SMD_oxyAge, 
+                            formula. = ~ . - oxyAge + dailyDose,
+                            newdata = scdata, control = control)
+print(fit_SMD_dailyDose, 4)
+p_value(fit_SMD_dailyDose)
 
 fit_SMD_admin_int <- update(fit_SMD_oxyAge, 
                             formula. = ~ . - oxyAge + admin_int,
@@ -304,20 +304,20 @@ for (i in seq_along(study_names)) {
 fits_SMD_social
 fits_SMCR_social
 
-## general cognition
-study_names <- sort(unique(gcdata$study))
-fits_SMD_general <- fits_SMCR_general <-
+## neuro cognition
+study_names <- sort(unique(ncdata$study))
+fits_SMD_neuro <- fits_SMCR_neuro <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {
   print(study_names[i])
-  subdata <- droplevels(subset(gcdata, study != study_names[i]))
-  fits_SMD_general[[i]] <- update(fit_SMD_general, newdata = subdata,
+  subdata <- droplevels(subset(ncdata, study != study_names[i]))
+  fits_SMD_neuro[[i]] <- update(fit_SMD_neuro, newdata = subdata,
                                  control = control)
-  fits_SMCR_general[[i]] <- update(fit_SMCR_general, newdata = subdata,
+  fits_SMCR_neuro[[i]] <- update(fit_SMCR_neuro, newdata = subdata,
                                   control = control)
 }
-fits_SMD_general
-fits_SMCR_general
+fits_SMD_neuro
+fits_SMCR_neuro
 
 
 # --------- study characteristics ---------------

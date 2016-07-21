@@ -15,22 +15,28 @@ study_names_social <- ifelse(duplicated(scdata$study), "",
 tiff("forest_SMD_social.tif", height=1600, width=1000)
 forest(rma_SMD_social, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = 1.2,
-       slab = study_names_social)
+       slab = study_names_social, xlim = c(-7, 4),
+       ilab = as.character(scdata$outcome), ilab.xpos = -4.1,
+       ilab.pos = 4)
 text(-6.3, 74, "Authors (Year)", cex = cex)
-text(5.0, 74, "SMD", cex = cex)
-text(6.0, 74, "[95%-CI]", cex = cex)
+text(-4.1, 74, "Outcome", cex = cex, pos = 4)
+text(2.6, 74, "SMD", cex = cex)
+text(3.4, 74, "[95%-CI]", cex = cex)
 dev.off()
 
-## neuro cognition
+## neurocognition
 study_names_neuro <- ifelse(duplicated(ncdata$study), "", 
                               as.character(ncdata$study))
 tiff("forest_SMD_neuro.tif", height=400, width=1000)
 forest(rma_SMD_neuro, addfit = FALSE, xlab = "SMD", 
-       cex.lab = cex.lab, cex.axis = cex, cex = cex, alim = c(-2, 2),
-       slab = study_names_neuro)
-text(-2.5, 13, "Authors (Year)", cex = cex)
-text(2, 13, "SMD", cex = cex)
-text(2.45, 13, "[95%-CI]", cex = cex)
+       cex.lab = cex.lab, cex.axis = cex, cex = cex, 
+       xlim = c(-3.3, 1.9), slab = study_names_neuro,
+       ilab = as.character(ncdata$outcome), ilab.xpos = -2.1,
+       ilab.pos = 4)
+text(-2.97, 13, "Authors (Year)", cex = cex)
+text(-2.1, 13, "Outcome", cex = cex, pos = 4)
+text(1.17, 13, "SMD", cex = cex)
+text(1.59, 13, "[95%-CI]", cex = cex)
 dev.off()
 
 

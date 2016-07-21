@@ -58,3 +58,38 @@ regtest(rma_SMCR_neuro, model = "lm", predictor = "sei")
 trimfill(rma_SMCR_neuro, estimator = "R0")
 par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
 dev.off()
+
+
+# ------- moderator plots -------
+mod_plot <- function(x, effect, weights = 1, xlab = NULL, 
+                     ylab = NULL, ylim = NULL, bw = TRUE,
+                     ...) {
+  library(brms)
+  stopifnot(is(x, "brmsfit"))
+  stopifnot(length(effect) == 1L)
+  me <- marginal_effects(x, effects = effect)
+  attr(me[[1]], "points")$.WEIGHTS <- weights
+  effects <- attributes(me[[1]])$effects
+  if (!is.null(xlab)) xlab <- xlab(xlab)
+  if (!is.null(ylab)) ylab <- ylab(ylab)
+  if (!is.null(ylim)) ylim <- ylim(ylim)
+  out <- plot(me, do_plot = FALSE, ...)[[1]]
+  if (bw && grepl("geom_smooth", capture.output(out$layers[[1]])[1])) {
+    # make sure that plots are black and white
+    out <- out + geom_smooth(stat = "identity", colour = "black")
+  }
+  out + geom_point(aes_string(x = effects[1], y = ".RESP", size = ".WEIGHTS"), 
+                   shape = 1, data = attr(me[[1]], "points"), 
+                   inherit.aes = FALSE, show.legend = FALSE) +
+    xlab + ylab + ylim
+}
+
+theme_set(theme_bw())
+
+vSMD_level <- scdata[!is.na(scdata$level), "vSMD"]
+weights <- 1/(0.18^2 + 0.05^2 + vSMD_level)
+(pl_level <- mod_plot(fit_SMD_level, "level", weights = weights, 
+                      xlab = "Cognition level", ylab = "SMD"))
+tiff("cognition_level.tif", height=400, width=400)
+print(pl_level)
+dev.off()

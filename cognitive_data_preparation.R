@@ -2,7 +2,8 @@ cdata <- read.csv2("data/cognitive.csv", na.strings = c("NA", ""))
 cdata$obs <- 1:nrow(cdata)
 cdata$study <- paste0(cdata$author, " (", cdata$year, ")")
 cdata$country_simple <- factor(ifelse(cdata$country != "USA", "other", "USA"))
-cdata$level <- relevel(cdata$level, "low_level")
+cdata$level <- factor(cdata$level, levels = c("low_level", "high_level"), 
+                      labels = c("Low", "High"))
 
 library(metafor)
 # Hedges'g estimates

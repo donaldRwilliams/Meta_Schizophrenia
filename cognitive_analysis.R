@@ -36,7 +36,6 @@ prior_sg2a3 <- c(set_prior("normal(0,0.5)"),
 iter <- 5000
 options(mc.cores = 2)
 control <- list(adapt_delta = 0.95)
-theme_set(theme_bw())
 
 # ---------- primary meta-analysis ----------------
 ## social cognition
@@ -323,7 +322,7 @@ for (i in seq_along(study_names)) {
 fits_SMD_social
 fits_SMCR_social
 
-## neuro cognition
+## neurocognition
 study_names <- sort(unique(ncdata$study))
 fits_SMD_neuro <- fits_SMCR_neuro <-
   setNames(vector("list", length(study_names)), study_names)

@@ -189,6 +189,13 @@ fit_SMD_level <- update(fit_SMD_oxyAge,
 fit_SMD_level
 p_value(fit_SMD_level)
 plot(marginal_effects(fit_SMD_level), points = TRUE)
+hypothesis(fit_SMD_level, "intercept + levelHigh = 0")
+
+# cognition level with priors
+add_prior <- set_prior("normal(0,0.2)", coef = "levelHigh")
+fit_SMD_level2 <- update(fit_SMD_level, prior = add_prior)
+(hyp <- hypothesis(fit_SMD_level2, "levelHigh = 0"))
+plot(hyp)
 
 ### special moderator analysis for emotion recognition of fear
 fit_SMD_fear <- brm(SMD | se(sqrt(vSMD)) ~ 
@@ -309,18 +316,23 @@ p_value(fit_SMCR_fear)
 # ---------------- leave one out analysis ----------------
 ## social cognition
 study_names <- sort(unique(scdata$study))
-fits_SMD_social <- fits_SMCR_social <-
+fits_SMD_social <- fits_SMCR_social <- fits_SMD_level <-
   setNames(vector("list", length(study_names)), study_names)
 for (i in seq_along(study_names)) {
   print(study_names[i])
   subdata <- droplevels(subset(scdata, study != study_names[i]))
-  fits_SMD_social[[i]] <- update(fit_SMD_social, newdata = subdata,
-                                 control = control)
-  fits_SMCR_social[[i]] <- update(fit_SMCR_social, newdata = subdata,
+  capture.output({
+    fits_SMD_social[[i]] <- update(fit_SMD_social, newdata = subdata,
+                                   control = control)
+    fits_SMCR_social[[i]] <- update(fit_SMCR_social, newdata = subdata,
+                                    control = control)
+    fits_SMD_level[[i]] <- update(fit_SMD_level, newdata = subdata,
                                   control = control)
+  })
 }
 fits_SMD_social
 fits_SMCR_social
+fits_SMD_level
 
 ## neurocognition
 study_names <- sort(unique(ncdata$study))
@@ -329,10 +341,12 @@ fits_SMD_neuro <- fits_SMCR_neuro <-
 for (i in seq_along(study_names)) {
   print(study_names[i])
   subdata <- droplevels(subset(ncdata, study != study_names[i]))
-  fits_SMD_neuro[[i]] <- update(fit_SMD_neuro, newdata = subdata,
-                                 control = control)
-  fits_SMCR_neuro[[i]] <- update(fit_SMCR_neuro, newdata = subdata,
+  capture.output({
+    fits_SMD_neuro[[i]] <- update(fit_SMD_neuro, newdata = subdata,
                                   control = control)
+    fits_SMCR_neuro[[i]] <- update(fit_SMCR_neuro, newdata = subdata,
+                                   control = control)
+  })
 }
 fits_SMD_neuro
 fits_SMCR_neuro

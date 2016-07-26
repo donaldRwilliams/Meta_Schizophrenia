@@ -5,14 +5,168 @@ rma_SMCR_social <- rma(SMCR ~ 1, vi = vSMCR, data = scdata)
 rma_SMD_neuro <- rma(SMD ~ 1, vi = vSMD, data = ncdata)
 rma_SMCR_neuro <- rma(SMCR ~ 1, vi = vSMCR, data = ncdata)
 
-# ------- forest plots ---------
+# -------- new forest plots --------
+## social cognition complete
+forest_data_social <- data.frame(
+  mean = c(NA, NA, NA, scdata$SMD, NA, 0.04),
+  # using 0 instead of NA in lower and upper avoids a strange bug
+  lower = c(0, 0, 0, scdata$SMD - 1.96 * sqrt(scdata$vSMD), 0, -0.11),
+  upper = c(0, 0, 0, scdata$SMD + 1.96 * sqrt(scdata$vSMD), 0, 0.18)
+)
+study_names_social <- ifelse(duplicated(scdata$study), "", 
+                             as.character(scdata$study))
+label_text_social <- cbind(
+  c("Authors (year)", NA, NA, study_names_social, NA, "Summary"),
+  c("Outcome", NA, NA, as.character(scdata$outcome), NA, NA),
+  c("SMD", NA, NA, format(round(scdata$SMD, 2), nsmall = 2), NA, "0.04")
+)
+is_summary <- c(TRUE, rep(FALSE, nrow(scdata) + 3), TRUE, TRUE)
+
+tiff("forest_SMD_social.tif", height=1600, width=1200)
+forestplot(label_text_social, forest_data_social,
+           align = c("l", "l", "r"), is.summary = is_summary, 
+           txt_gp = fpTxtGp(label = gpar(cex = 1.5),
+                            ticks = gpar(cex = 2)),
+           ci.vertices = TRUE, ci.vertices.height = .25,
+           hrzl_lines = list("3" = gpar(lty=2), 
+                             "77" = gpar(lwd=1, columns=1:3, col = "#000044")),
+           col = fpColors(box = "black", line = "darkblue", 
+                          summary = "black"))
+dev.off()
+
+## neurocognition complete
+forest_data_neuro <- data.frame(
+  mean = c(NA, NA, NA, ncdata$SMD, NA, 0.09),
+  # using 0 instead of NA in lower and upper avoids a strange bug
+  lower = c(0, 0, 0, ncdata$SMD - 1.96 * sqrt(ncdata$vSMD), 0, -0.15),
+  upper = c(0, 0, 0, ncdata$SMD + 1.96 * sqrt(ncdata$vSMD), 0, 0.33)
+)
+study_names_neuro <- ifelse(duplicated(ncdata$study), "", 
+                             as.character(ncdata$study))
+label_text_neuro <- cbind(
+  c("Authors (year)", NA, NA, study_names_neuro, NA, "Summary"),
+  c("Outcome", NA, NA, as.character(ncdata$outcome), NA, NA),
+  c("SMD", NA, NA, format(round(ncdata$SMD, 2), nsmall = 2), NA, "0.09")
+)
+is_summary <- c(TRUE, rep(FALSE, nrow(ncdata) + 3), TRUE, TRUE)
+
+tiff("forest_SMD_neuro.tif", height=400, width=1200)
+forestplot(label_text_neuro, forest_data_neuro,
+           align = c("l", "l", "r"), is.summary = is_summary, 
+           txt_gp = fpTxtGp(label = gpar(cex = 1.5),
+                            ticks = gpar(cex = 2)),
+           ci.vertices = TRUE, ci.vertices.height = .25,
+           hrzl_lines = list("3" = gpar(lty=2), 
+                             "16" = gpar(lwd=1, columns=1:3, col = "#000044")),
+           col = fpColors(box = "black", line = "darkblue", 
+                          summary = "black"))
+dev.off()
+
+## social cognition level High vs. low 
+scdata_low <- subset(scdata, level == "Low")
+scdata_high <- subset(scdata, level == "High")
+forest_data_slevel <- data.frame(
+  mean = c(NA, NA, NA, scdata_low$SMD, NA, -0.04, 
+           NA, NA, scdata_high$SMD, NA, 0.20),
+  # using 0 instead of NA in lower and upper avoids a strange bug
+  lower = c(0, 0, 0, scdata_low$SMD - 1.96 * sqrt(scdata_low$vSMD), 0, -0.20,
+            0, 0, scdata_high$SMD - 1.96 * sqrt(scdata_high$vSMD), 0, 0.02),
+  higher = c(0, 0, 0, scdata_low$SMD + 1.96 * sqrt(scdata_low$vSMD), 0, 0.10,
+             0, 0, scdata_high$SMD + 1.96 * sqrt(scdata_high$vSMD), 0, 0.36)
+)
+study_names_low <- ifelse(duplicated(scdata_low$study), "", 
+                          as.character(scdata_low$study))
+study_names_high <- ifelse(duplicated(scdata_high$study), "", 
+                           as.character(scdata_high$study))
+label_text_slevel <- cbind(
+  c("Authors (year)", NA, NA, study_names_low, NA, "Summary cognition level: Low",
+    NA, NA, study_names_high, NA, "Summary cognition level: High"),
+  c("Outcome", NA, NA, as.character(scdata_low$outcome), NA, NA, 
+    NA, NA, as.character(scdata_high$outcome), NA, NA),
+  c("SMD", NA, NA, format(round(scdata_low$SMD, 2), nsmall = 2), NA, "-0.04",
+    NA, NA, format(round(scdata_high$SMD, 2), nsmall = 2), NA, "0.20")
+)
+nlow <- sum(scdata$level == "Low", na.rm = TRUE)
+nhigh <- sum(scdata$level == "High", na.rm = TRUE)
+is_summary <- c(TRUE, rep(FALSE, nlow + 3), TRUE, 
+                rep(FALSE, nhigh + 3), TRUE)
+
+tiff("forest_SMD_slevel.tif", height=1600, width=1200)
+forestplot(label_text_slevel, forest_data_slevel,
+           align = c("l", "l", "r"), is.summary = is_summary, 
+           txt_gp = fpTxtGp(label = gpar(cex = 1.5),
+                            ticks = gpar(cex = 2)),
+           ci.vertices = TRUE, ci.vertices.height = .25,
+           hrzl_lines = list("3" = gpar(lty=2), 
+                             "43" = gpar(lwd=1, columns=1:3, col = "#000044"),
+                             "70" = gpar(lwd=1, columns=1:3, col = "#000044")),
+           col = fpColors(box = "black", line = "darkblue", 
+                          summary = "black"))
+dev.off()
+
+## social cognition type (SG2) 
+scdata_emr <- subset(scdata, SG2 == "emotionRec")
+scdata_tom <- subset(scdata, SG2 == "theoryOfMind")
+scdata_hob <- subset(scdata, SG2 == "hostileBias")
+forest_data_stype <- data.frame(
+  mean = c(NA, NA, NA, scdata_emr$SMD, NA, 0.05, 
+           NA, NA, scdata_tom$SMD, NA, 0.09,
+           NA, NA, scdata_hob$SMD, NA, -0.14),
+  # using 0 instead of NA in lower and upper avoids a strange bug
+  lower = c(0, 0, 0, scdata_emr$SMD - 1.96 * sqrt(scdata_emr$vSMD), 0, -0.12,
+            0, 0, scdata_tom$SMD - 1.96 * sqrt(scdata_tom$vSMD), 0, -0.10,
+            0, 0, scdata_hob$SMD - 1.96 * sqrt(scdata_hob$vSMD), 0, -0.45),
+  higher = c(0, 0, 0, scdata_emr$SMD + 1.96 * sqrt(scdata_emr$vSMD), 0, 0.23,
+             0, 0, scdata_tom$SMD + 1.96 * sqrt(scdata_tom$vSMD), 0, 0.24,
+             0, 0, scdata_hob$SMD + 1.96 * sqrt(scdata_hob$vSMD), 0, 0.18)
+)
+study_names_emr <- ifelse(duplicated(scdata_emr$study), "", 
+                          as.character(scdata_emr$study))
+study_names_tom <- ifelse(duplicated(scdata_tom$study), "", 
+                           as.character(scdata_tom$study))
+study_names_hob <- ifelse(duplicated(scdata_hob$study), "", 
+                          as.character(scdata_hob$study))
+label_text_stype <- cbind(
+  c("Authors (year)", NA, NA, study_names_emr, NA, "Summary emotion recognition",
+    NA, NA, study_names_tom, NA, "Summary theory of mind",
+    NA, NA, study_names_hob, NA, "Summary hostile bias"),
+  c("Outcome", NA, NA, as.character(scdata_emr$outcome), NA, NA, 
+    NA, NA, as.character(scdata_tom$outcome), NA, NA,
+    NA, NA, as.character(scdata_hob$outcome), NA, NA),
+  c("SMD", NA, NA, format(round(scdata_emr$SMD, 2), nsmall = 2), NA, "0.05",
+    NA, NA, format(round(scdata_tom$SMD, 2), nsmall = 2), NA, "0.09",
+    NA, NA, format(round(scdata_hob$SMD, 2), nsmall = 2), NA, "-0.14")
+)
+nemr <- sum(scdata$SG2 == "emotionRec", na.rm = TRUE)
+ntom <- sum(scdata$SG2 == "theoryOfMind", na.rm = TRUE)
+nhob <- sum(scdata$SG2 == "hostileBias", na.rm = TRUE)
+is_summary <- c(TRUE, rep(FALSE, nemr + 3), TRUE, 
+                rep(FALSE, ntom + 3), TRUE,
+                rep(FALSE, nhob + 3), TRUE)
+
+tiff("forest_SMD_stype.tif", height=1600, width=1200)
+forestplot(label_text_stype, forest_data_stype,
+           align = c("l", "l", "r"), is.summary = is_summary, 
+           txt_gp = fpTxtGp(label = gpar(cex = 1.5),
+                            ticks = gpar(cex = 2)),
+           ci.vertices = TRUE, ci.vertices.height = .25,
+           hrzl_lines = list("3" = gpar(lty=2), 
+                             "33" = gpar(lwd=1, columns=1:3, col = "#000044"),
+                             "70" = gpar(lwd=1, columns=1:3, col = "#000044"),
+                             "80" = gpar(lwd=1, columns=1:3, col = "#000044")),
+           col = fpColors(box = "black", line = "darkblue", 
+                          summary = "black"))
+dev.off()
+
+
+# ------- old forest plots ---------
 cex <- 1.4
 cex.lab <- 2
 
 ## social cognition
 study_names_social <- ifelse(duplicated(scdata$study), "", 
                              as.character(scdata$study))
-tiff("forest_SMD_social.tif", height=1600, width=1000)
+tiff("forest_SMD_social_old.tif", height=1600, width=1000)
 forest(rma_SMD_social, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = 1.2,
        slab = study_names_social, xlim = c(-7, 4),
@@ -27,7 +181,7 @@ dev.off()
 ## neurocognition
 study_names_neuro <- ifelse(duplicated(ncdata$study), "", 
                               as.character(ncdata$study))
-tiff("forest_SMD_neuro.tif", height=400, width=1000)
+tiff("forest_SMD_neuro_old.tif", height=400, width=1000)
 forest(rma_SMD_neuro, addfit = FALSE, xlab = "SMD", 
        cex.lab = cex.lab, cex.axis = cex, cex = cex, 
        xlim = c(-3.3, 1.9), slab = study_names_neuro,

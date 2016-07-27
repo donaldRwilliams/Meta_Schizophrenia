@@ -122,7 +122,7 @@ fit_SMD_oxyAge <- brm(SMD | se(sqrt(vSMD)) ~
                         0 + intercept + oxyAge + (1|study) + (1|obs), 
                       data = scdata, prior = prior, sample_prior = TRUE,
                       iter = iter, control = control)
-print(fit_SMD_oxyAge, 4)
+print(fit_SMD_oxyAge, 3)
 plot(fit_SMD_oxyAge)
 p_value(fit_SMD_oxyAge)
 plot(marginal_effects(fit_SMD_oxyAge), points = TRUE)
@@ -130,7 +130,7 @@ plot(marginal_effects(fit_SMD_oxyAge), points = TRUE)
 fit_SMD_plaAge <- update(fit_SMD_oxyAge, 
                          formula. = ~ . - oxyAge + plaAge,
                          newdata = scdata, control = control)
-print(fit_SMD_plaAge, 4)
+print(fit_SMD_plaAge, 3)
 p_value(fit_SMD_plaAge)
 plot(marginal_effects(fit_SMD_plaAge), points = TRUE)
 
@@ -155,20 +155,20 @@ p_value(fit_SMD_training)
 fit_SMD_duration <- update(fit_SMD_oxyAge, 
                            formula. = ~ . - oxyAge + duration,
                            newdata = scdata, control = control)
-print(fit_SMD_duration, 4)
+print(fit_SMD_duration, 3)
 p_value(fit_SMD_duration)
 plot(marginal_effects(fit_SMD_duration), points = TRUE)
 
 fit_SMD_eachDose <- update(fit_SMD_oxyAge, 
                            formula. = ~ . - oxyAge + eachDose,
                            newdata = scdata, control = control)
-print(fit_SMD_eachDose, 4)
+print(fit_SMD_eachDose, 3)
 p_value(fit_SMD_eachDose)
 
 fit_SMD_dailyDose <- update(fit_SMD_oxyAge, 
                             formula. = ~ . - oxyAge + dailyDose,
                             newdata = scdata, control = control)
-print(fit_SMD_dailyDose, 4)
+print(fit_SMD_dailyDose, 3)
 p_value(fit_SMD_dailyDose)
 
 fit_SMD_admin_int <- update(fit_SMD_oxyAge, 

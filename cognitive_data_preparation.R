@@ -1,6 +1,9 @@
 cdata <- read.csv2("data/cognitive.csv", na.strings = c("NA", ""))
 cdata$obs <- 1:nrow(cdata)
-cdata$study <- paste0(cdata$author, " (", cdata$year, ")")
+cdata$sample <- paste0(cdata$author, " (", cdata$year, ")")
+# Goldman has two separate samples
+cdata$study <- ifelse(!grepl("Goldman", cdata$sample), cdata$sample,
+                      "Goldman et al. (2011)")
 cdata$country_simple <- factor(ifelse(cdata$country != "USA", "other", "USA"))
 cdata$level <- factor(cdata$level, levels = c("low_level", "high_level"), 
                       labels = c("Low", "High"))
@@ -28,8 +31,8 @@ ccdata <-
 
 cdata <- rbind(cidata, ccdata)
 
-# sort alphabetical after cognition type and study
-cdata <- cdata[order(cdata$SG1, cdata$study), ]
+# sort alphabetical after cognition type and sample
+cdata <- cdata[order(cdata$SG1, cdata$sample), ]
 
 # assumed pre-post correlation
 cdata$cor_pre_post <- 0.5

@@ -8,17 +8,17 @@ rma_SMCR_neuro <- rma(SMCR ~ 1, vi = vSMCR, data = ncdata)
 # -------- new forest plots --------
 ## social cognition complete
 forest_data_social <- data.frame(
-  mean = c(NA, NA, NA, scdata$SMD, NA, 0.04),
+  mean = c(NA, NA, NA, scdata$SMD, NA, 0.07),
   # using 0 instead of NA in lower and upper avoids a strange bug
-  lower = c(0, 0, 0, scdata$SMD - 1.96 * sqrt(scdata$vSMD), 0, -0.09),
-  upper = c(0, 0, 0, scdata$SMD + 1.96 * sqrt(scdata$vSMD), 0, 0.15)
+  lower = c(0, 0, 0, scdata$SMD - 1.96 * sqrt(scdata$vSMD), 0, -0.06),
+  upper = c(0, 0, 0, scdata$SMD + 1.96 * sqrt(scdata$vSMD), 0, 0.17)
 )
-study_names_social <- ifelse(duplicated(scdata$study), "", 
-                             as.character(scdata$study))
+sample_names_social <- ifelse(duplicated(scdata$sample), "", 
+                             as.character(scdata$sample))
 label_text_social <- cbind(
-  c("Authors (year)", NA, NA, study_names_social, NA, "Summary"),
+  c("Authors (year)", NA, NA, sample_names_social, NA, "Summary"),
   c("Outcome", NA, NA, as.character(scdata$outcome), NA, NA),
-  c("SMD", NA, NA, format(round(scdata$SMD, 2), nsmall = 2), NA, "0.04")
+  c("SMD", NA, NA, format(round(scdata$SMD, 2), nsmall = 2), NA, "0.07")
 )
 is_summary <- c(TRUE, rep(FALSE, nrow(scdata) + 3), TRUE, TRUE)
 
@@ -29,7 +29,7 @@ forestplot(label_text_social, forest_data_social,
                             ticks = gpar(cex = 2)),
            ci.vertices = TRUE, ci.vertices.height = .25,
            hrzl_lines = list("3" = gpar(lty=2), 
-                             "91" = gpar(lwd=1, columns=1:3, col = "#000044")),
+                             "72" = gpar(lwd=1, columns=1:3, col = "#000044")),
            col = fpColors(box = "black", line = "darkblue", 
                           summary = "black"))
 dev.off()
@@ -41,10 +41,10 @@ forest_data_neuro <- data.frame(
   lower = c(0, 0, 0, ncdata$SMD - 1.96 * sqrt(ncdata$vSMD), 0, -0.15),
   upper = c(0, 0, 0, ncdata$SMD + 1.96 * sqrt(ncdata$vSMD), 0, 0.33)
 )
-study_names_neuro <- ifelse(duplicated(ncdata$study), "", 
-                             as.character(ncdata$study))
+sample_names_neuro <- ifelse(duplicated(ncdata$sample), "", 
+                             as.character(ncdata$sample))
 label_text_neuro <- cbind(
-  c("Authors (year)", NA, NA, study_names_neuro, NA, "Summary"),
+  c("Authors (year)", NA, NA, sample_names_neuro, NA, "Summary"),
   c("Outcome", NA, NA, as.character(ncdata$outcome), NA, NA),
   c("SMD", NA, NA, format(round(ncdata$SMD, 2), nsmall = 2), NA, "0.09")
 )
@@ -57,33 +57,35 @@ forestplot(label_text_neuro, forest_data_neuro,
                             ticks = gpar(cex = 2)),
            ci.vertices = TRUE, ci.vertices.height = .25,
            hrzl_lines = list("3" = gpar(lty=2), 
-                             "16" = gpar(lwd=1, columns=1:3, col = "#000044")),
+                             "15" = gpar(lwd=1, columns=1:3, col = "#000044")),
            col = fpColors(box = "black", line = "darkblue", 
                           summary = "black"))
 dev.off()
 
-## social cognition level High vs. low 
+## social cognition level controlled vs. automatic
 scdata_low <- subset(scdata, level == "Low")
 scdata_high <- subset(scdata, level == "High")
 forest_data_slevel <- data.frame(
-  mean = c(NA, NA, NA, scdata_low$SMD, NA, -0.03, 
+  mean = c(NA, NA, NA, scdata_low$SMD, NA, 0.01, 
            NA, NA, scdata_high$SMD, NA, 0.20),
   # using 0 instead of NA in lower and upper avoids a strange bug
-  lower = c(0, 0, 0, scdata_low$SMD - 1.96 * sqrt(scdata_low$vSMD), 0, -0.15,
+  lower = c(0, 0, 0, scdata_low$SMD - 1.96 * sqrt(scdata_low$vSMD), 0, -0.11,
             0, 0, scdata_high$SMD - 1.96 * sqrt(scdata_high$vSMD), 0, 0.05),
-  higher = c(0, 0, 0, scdata_low$SMD + 1.96 * sqrt(scdata_low$vSMD), 0, 0.08,
-             0, 0, scdata_high$SMD + 1.96 * sqrt(scdata_high$vSMD), 0, 0.34)
+  higher = c(0, 0, 0, scdata_low$SMD + 1.96 * sqrt(scdata_low$vSMD), 0, 0.11,
+             0, 0, scdata_high$SMD + 1.96 * sqrt(scdata_high$vSMD), 0, 0.33)
 )
-study_names_low <- ifelse(duplicated(scdata_low$study), "", 
-                          as.character(scdata_low$study))
-study_names_high <- ifelse(duplicated(scdata_high$study), "", 
-                           as.character(scdata_high$study))
+sample_names_low <- ifelse(duplicated(scdata_low$sample), "", 
+                          as.character(scdata_low$sample))
+sample_names_high <- ifelse(duplicated(scdata_high$sample), "", 
+                           as.character(scdata_high$sample))
 label_text_slevel <- cbind(
-  c("Authors (year)", NA, NA, study_names_low, NA, "Summary cognition level: Low",
-    NA, NA, study_names_high, NA, "Summary cognition level: High"),
+  c("Authors (year)", NA, NA, sample_names_low, NA, 
+    "Summary automatic social cognition",
+    NA, NA, sample_names_high, NA, 
+    "Summary controlled social cognition"),
   c("Outcome", NA, NA, as.character(scdata_low$outcome), NA, NA, 
     NA, NA, as.character(scdata_high$outcome), NA, NA),
-  c("SMD", NA, NA, format(round(scdata_low$SMD, 2), nsmall = 2), NA, "-0.03",
+  c("SMD", NA, NA, format(round(scdata_low$SMD, 2), nsmall = 2), NA, "0.01",
     NA, NA, format(round(scdata_high$SMD, 2), nsmall = 2), NA, "0.20")
 )
 nlow <- sum(scdata$level == "Low", na.rm = TRUE)
@@ -98,65 +100,65 @@ forestplot(label_text_slevel, forest_data_slevel,
                             ticks = gpar(cex = 2)),
            ci.vertices = TRUE, ci.vertices.height = .25,
            hrzl_lines = list("3" = gpar(lty=2), 
-                             "53" = gpar(lwd=1, columns=1:3, col = "#000044"),
-                             "84" = gpar(lwd=1, columns=1:3, col = "#000044")),
+                             "48" = gpar(lwd=1, columns=1:3, col = "#000044"),
+                             "76" = gpar(lwd=1, columns=1:3, col = "#000044")),
            col = fpColors(box = "black", line = "darkblue", 
                           summary = "black"))
 dev.off()
 
 ## social cognition type (SG2) 
-scdata_emr <- subset(scdata, SG2 == "emotionRec")
-scdata_tom <- subset(scdata, SG2 == "theoryOfMind")
-scdata_hob <- subset(scdata, SG2 == "hostileBias")
-forest_data_stype <- data.frame(
-  mean = c(NA, NA, NA, scdata_emr$SMD, NA, 0.02, 
-           NA, NA, scdata_tom$SMD, NA, 0.12,
-           NA, NA, scdata_hob$SMD, NA, -0.15),
-  # using 0 instead of NA in lower and upper avoids a strange bug
-  lower = c(0, 0, 0, scdata_emr$SMD - 1.96 * sqrt(scdata_emr$vSMD), 0, -0.12,
-            0, 0, scdata_tom$SMD - 1.96 * sqrt(scdata_tom$vSMD), 0, -0.04,
-            0, 0, scdata_hob$SMD - 1.96 * sqrt(scdata_hob$vSMD), 0, -0.46),
-  higher = c(0, 0, 0, scdata_emr$SMD + 1.96 * sqrt(scdata_emr$vSMD), 0, 0.16,
-             0, 0, scdata_tom$SMD + 1.96 * sqrt(scdata_tom$vSMD), 0, 0.25,
-             0, 0, scdata_hob$SMD + 1.96 * sqrt(scdata_hob$vSMD), 0, 0.16)
-)
-study_names_emr <- ifelse(duplicated(scdata_emr$study), "", 
-                          as.character(scdata_emr$study))
-study_names_tom <- ifelse(duplicated(scdata_tom$study), "", 
-                           as.character(scdata_tom$study))
-study_names_hob <- ifelse(duplicated(scdata_hob$study), "", 
-                          as.character(scdata_hob$study))
-label_text_stype <- cbind(
-  c("Authors (year)", NA, NA, study_names_emr, NA, "Summary emotion recognition",
-    NA, NA, study_names_tom, NA, "Summary theory of mind",
-    NA, NA, study_names_hob, NA, "Summary hostile bias"),
-  c("Outcome", NA, NA, as.character(scdata_emr$outcome), NA, NA, 
-    NA, NA, as.character(scdata_tom$outcome), NA, NA,
-    NA, NA, as.character(scdata_hob$outcome), NA, NA),
-  c("SMD", NA, NA, format(round(scdata_emr$SMD, 2), nsmall = 2), NA, "0.02",
-    NA, NA, format(round(scdata_tom$SMD, 2), nsmall = 2), NA, "0.12",
-    NA, NA, format(round(scdata_hob$SMD, 2), nsmall = 2), NA, "-0.15")
-)
-nemr <- sum(scdata$SG2 == "emotionRec", na.rm = TRUE)
-ntom <- sum(scdata$SG2 == "theoryOfMind", na.rm = TRUE)
-nhob <- sum(scdata$SG2 == "hostileBias", na.rm = TRUE)
-is_summary <- c(TRUE, rep(FALSE, nemr + 3), TRUE, 
-                rep(FALSE, ntom + 3), TRUE,
-                rep(FALSE, nhob + 3), TRUE)
-
-tiff("forest_SMD_stype.tif", height=1650, width=1200)
-forestplot(label_text_stype, forest_data_stype,
-           align = c("l", "l", "r"), is.summary = is_summary, 
-           txt_gp = fpTxtGp(label = gpar(cex = 1.5),
-                            ticks = gpar(cex = 2)),
-           ci.vertices = TRUE, ci.vertices.height = .25,
-           hrzl_lines = list("3" = gpar(lty=2), 
-                             "41" = gpar(lwd=1, columns=1:3, col = "#000044"),
-                             "82" = gpar(lwd=1, columns=1:3, col = "#000044"),
-                             "92" = gpar(lwd=1, columns=1:3, col = "#000044")),
-           col = fpColors(box = "black", line = "darkblue", 
-                          summary = "black"))
-dev.off()
+# scdata_emr <- subset(scdata, SG2 == "emotionRec")
+# scdata_tom <- subset(scdata, SG2 == "theoryOfMind")
+# scdata_hob <- subset(scdata, SG2 == "hostileBias")
+# forest_data_stype <- data.frame(
+#   mean = c(NA, NA, NA, scdata_emr$SMD, NA, 0.02, 
+#            NA, NA, scdata_tom$SMD, NA, 0.12,
+#            NA, NA, scdata_hob$SMD, NA, -0.15),
+#   # using 0 instead of NA in lower and upper avoids a strange bug
+#   lower = c(0, 0, 0, scdata_emr$SMD - 1.96 * sqrt(scdata_emr$vSMD), 0, -0.12,
+#             0, 0, scdata_tom$SMD - 1.96 * sqrt(scdata_tom$vSMD), 0, -0.04,
+#             0, 0, scdata_hob$SMD - 1.96 * sqrt(scdata_hob$vSMD), 0, -0.46),
+#   higher = c(0, 0, 0, scdata_emr$SMD + 1.96 * sqrt(scdata_emr$vSMD), 0, 0.16,
+#              0, 0, scdata_tom$SMD + 1.96 * sqrt(scdata_tom$vSMD), 0, 0.25,
+#              0, 0, scdata_hob$SMD + 1.96 * sqrt(scdata_hob$vSMD), 0, 0.16)
+# )
+# sample_names_emr <- ifelse(duplicated(scdata_emr$sample), "", 
+#                           as.character(scdata_emr$sample))
+# sample_names_tom <- ifelse(duplicated(scdata_tom$sample), "", 
+#                            as.character(scdata_tom$sample))
+# sample_names_hob <- ifelse(duplicated(scdata_hob$sample), "", 
+#                           as.character(scdata_hob$sample))
+# label_text_stype <- cbind(
+#   c("Authors (year)", NA, NA, sample_names_emr, NA, "Summary emotion recognition",
+#     NA, NA, sample_names_tom, NA, "Summary theory of mind",
+#     NA, NA, sample_names_hob, NA, "Summary hostile bias"),
+#   c("Outcome", NA, NA, as.character(scdata_emr$outcome), NA, NA, 
+#     NA, NA, as.character(scdata_tom$outcome), NA, NA,
+#     NA, NA, as.character(scdata_hob$outcome), NA, NA),
+#   c("SMD", NA, NA, format(round(scdata_emr$SMD, 2), nsmall = 2), NA, "0.02",
+#     NA, NA, format(round(scdata_tom$SMD, 2), nsmall = 2), NA, "0.12",
+#     NA, NA, format(round(scdata_hob$SMD, 2), nsmall = 2), NA, "-0.15")
+# )
+# nemr <- sum(scdata$SG2 == "emotionRec", na.rm = TRUE)
+# ntom <- sum(scdata$SG2 == "theoryOfMind", na.rm = TRUE)
+# nhob <- sum(scdata$SG2 == "hostileBias", na.rm = TRUE)
+# is_summary <- c(TRUE, rep(FALSE, nemr + 3), TRUE, 
+#                 rep(FALSE, ntom + 3), TRUE,
+#                 rep(FALSE, nhob + 3), TRUE)
+# 
+# tiff("forest_SMD_stype.tif", height=1650, width=1200)
+# forestplot(label_text_stype, forest_data_stype,
+#            align = c("l", "l", "r"), is.summary = is_summary, 
+#            txt_gp = fpTxtGp(label = gpar(cex = 1.5),
+#                             ticks = gpar(cex = 2)),
+#            ci.vertices = TRUE, ci.vertices.height = .25,
+#            hrzl_lines = list("3" = gpar(lty=2), 
+#                              "41" = gpar(lwd=1, columns=1:3, col = "#000044"),
+#                              "82" = gpar(lwd=1, columns=1:3, col = "#000044"),
+#                              "92" = gpar(lwd=1, columns=1:3, col = "#000044")),
+#            col = fpColors(box = "black", line = "darkblue", 
+#                           summary = "black"))
+# dev.off()
 
 
 # ------- old forest plots ---------
@@ -221,35 +223,35 @@ dev.off()
 
 
 # ------- moderator plots -------
-mod_plot <- function(x, effect, weights = 1, xlab = NULL, 
-                     ylab = NULL, ylim = NULL, bw = TRUE,
-                     ...) {
-  library(brms)
-  stopifnot(is(x, "brmsfit"))
-  stopifnot(length(effect) == 1L)
-  me <- marginal_effects(x, effects = effect)
-  attr(me[[1]], "points")$.WEIGHTS <- weights
-  effects <- attributes(me[[1]])$effects
-  if (!is.null(xlab)) xlab <- xlab(xlab)
-  if (!is.null(ylab)) ylab <- ylab(ylab)
-  if (!is.null(ylim)) ylim <- ylim(ylim)
-  out <- plot(me, do_plot = FALSE, ...)[[1]]
-  if (bw && grepl("geom_smooth", capture.output(out$layers[[1]])[1])) {
-    # make sure that plots are black and white
-    out <- out + geom_smooth(stat = "identity", colour = "black")
-  }
-  out + geom_point(aes_string(x = effects[1], y = ".RESP", size = ".WEIGHTS"), 
-                   shape = 1, data = attr(me[[1]], "points"), 
-                   inherit.aes = FALSE, show.legend = FALSE) +
-    xlab + ylab + ylim
-}
-
-theme_set(theme_bw())
-
-vSMD_level <- scdata[!is.na(scdata$level), "vSMD"]
-weights <- 1/(0.18^2 + 0.05^2 + vSMD_level)
-(pl_level <- mod_plot(fit_SMD_level, "level", weights = weights, 
-                      xlab = "Cognition level", ylab = "SMD"))
-tiff("cognition_level.tif", height=400, width=400)
-print(pl_level)
-dev.off()
+# mod_plot <- function(x, effect, weights = 1, xlab = NULL, 
+#                      ylab = NULL, ylim = NULL, bw = TRUE,
+#                      ...) {
+#   library(brms)
+#   stopifnot(is(x, "brmsfit"))
+#   stopifnot(length(effect) == 1L)
+#   me <- marginal_effects(x, effects = effect)
+#   attr(me[[1]], "points")$.WEIGHTS <- weights
+#   effects <- attributes(me[[1]])$effects
+#   if (!is.null(xlab)) xlab <- xlab(xlab)
+#   if (!is.null(ylab)) ylab <- ylab(ylab)
+#   if (!is.null(ylim)) ylim <- ylim(ylim)
+#   out <- plot(me, do_plot = FALSE, ...)[[1]]
+#   if (bw && grepl("geom_smooth", capture.output(out$layers[[1]])[1])) {
+#     # make sure that plots are black and white
+#     out <- out + geom_smooth(stat = "identity", colour = "black")
+#   }
+#   out + geom_point(aes_string(x = effects[1], y = ".RESP", size = ".WEIGHTS"), 
+#                    shape = 1, data = attr(me[[1]], "points"), 
+#                    inherit.aes = FALSE, show.legend = FALSE) +
+#     xlab + ylab + ylim
+# }
+# 
+# theme_set(theme_bw())
+# 
+# vSMD_level <- scdata[!is.na(scdata$level), "vSMD"]
+# weights <- 1/(0.18^2 + 0.05^2 + vSMD_level)
+# (pl_level <- mod_plot(fit_SMD_level, "level", weights = weights, 
+#                       xlab = "Cognition level", ylab = "SMD"))
+# tiff("cognition_level.tif", height=400, width=400)
+# print(pl_level)
+# dev.off()

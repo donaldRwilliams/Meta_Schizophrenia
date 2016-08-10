@@ -191,6 +191,7 @@ p_value(fit_SMD_country)
 fit_SMD_level <- update(fit_SMD_oxyAge, 
                         formula. = ~ . - oxyAge + level,
                         newdata = scdata, control = control)
+
 fit_SMD_level
 p_value(fit_SMD_level)
 plot(marginal_effects(fit_SMD_level), points = TRUE)

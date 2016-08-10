@@ -69,4 +69,5 @@ cdata$emotion <- sum_coding(cdata$emotion)
 scdata <- droplevels(subset(cdata, SG1 == "social_cog"))
 ncdata <- droplevels(subset(cdata, SG1 == "neurocognition"))
 ercdata <- droplevels(subset(cdata, SG2 == "emotionRec"))
-ercdata$fear <- factor(ifelse(ercdata$emotion != "fear", "other", "fear"))
+ercdata$fear <- factor(ifelse(ercdata$emotion != "fear", "other", "fear"),
+                       levels = c("other", "fear"))

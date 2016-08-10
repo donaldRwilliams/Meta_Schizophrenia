@@ -6,6 +6,7 @@ rma_SMD_neuro <- rma(SMD ~ 1, vi = vSMD, data = ncdata)
 rma_SMCR_neuro <- rma(SMCR ~ 1, vi = vSMCR, data = ncdata)
 
 # -------- new forest plots --------
+library(forestplot)
 ## social cognition complete
 forest_data_social <- data.frame(
   mean = c(NA, NA, NA, scdata$SMD, NA, 0.07),
@@ -70,7 +71,7 @@ forest_data_slevel <- data.frame(
            NA, NA, scdata_high$SMD, NA, 0.20),
   # using 0 instead of NA in lower and upper avoids a strange bug
   lower = c(0, 0, 0, scdata_low$SMD - 1.96 * sqrt(scdata_low$vSMD), 0, -0.11,
-            0, 0, scdata_high$SMD - 1.96 * sqrt(scdata_high$vSMD), 0, 0.05),
+            0, 0, scdata_high$SMD - 1.96 * sqrt(scdata_high$vSMD), 0, 0.06),
   higher = c(0, 0, 0, scdata_low$SMD + 1.96 * sqrt(scdata_low$vSMD), 0, 0.11,
              0, 0, scdata_high$SMD + 1.96 * sqrt(scdata_high$vSMD), 0, 0.33)
 )
@@ -80,9 +81,9 @@ sample_names_high <- ifelse(duplicated(scdata_high$sample), "",
                            as.character(scdata_high$sample))
 label_text_slevel <- cbind(
   c("Authors (year)", NA, NA, sample_names_low, NA, 
-    "Summary automatic social cognition",
+    "Summary low-level social cognition",
     NA, NA, sample_names_high, NA, 
-    "Summary controlled social cognition"),
+    "Summary high-level social cognition"),
   c("Outcome", NA, NA, as.character(scdata_low$outcome), NA, NA, 
     NA, NA, as.character(scdata_high$outcome), NA, NA),
   c("SMD", NA, NA, format(round(scdata_low$SMD, 2), nsmall = 2), NA, "0.01",
@@ -197,25 +198,28 @@ dev.off()
 
 
 # ------- publication bias ---------------
+level <- c(rep(16, 13), rep(17, 2), rep(16, 2), rep(17, 4,), rep(16, 8), 
+rep(17, 2), rep(16, 5), rep(17, 4), rep(16, 12), rep(17, 7), rep(16, 3), rep(17, 5))
+
 tiff("cognitive_funnel_plots.tif", height=550, width=850)
 dcex <- 2
 par(mfrow=c(2, 2), mar = c(5, 5, 2, 2) + 0.1)
 # social_cog
 funnel(rma_SMD_social, xlab = "Social cognition: SMD", 
-       cex = dcex, cex.axis = dcex, cex.lab = dcex)
+       cex = dcex, cex.axis = dcex, cex.lab = dcex, pch =level, back = "gray92" )
 regtest(rma_SMD_social, model = "lm", predictor = "sei")
 trimfill(rma_SMD_social, estimator = "R0")
 funnel(rma_SMCR_social, xlab = "Social cognition: SCMR", 
-       cex = dcex, cex.axis = dcex, cex.lab = dcex)
+       cex = dcex, cex.axis = dcex, cex.lab = dcex,  pch =level, back = "gray92")
 regtest(rma_SMCR_social, model = "lm", predictor = "sei")
 trimfill(rma_SMCR_social, estimator = "R0")
 # neuro_cog
 funnel(rma_SMD_neuro, xlab = "Neurocognition: SMD", 
-       cex = dcex, cex.axis = dcex, cex.lab = dcex)
+       cex = dcex, cex.axis = dcex, cex.lab = dcex, back = "gray92")
 regtest(rma_SMD_neuro, model = "lm", predictor = "sei")
 trimfill(rma_SMD_neuro, estimator = "R0")
 funnel(rma_SMCR_neuro, xlab = "Neurocognition: SCMR", 
-       cex = dcex, cex.axis = dcex, cex.lab = dcex)
+       cex = dcex, cex.axis = dcex, cex.lab = dcex, back = "gray92")
 regtest(rma_SMCR_neuro, model = "lm", predictor = "sei")
 trimfill(rma_SMCR_neuro, estimator = "R0")
 par(mfrow=c(1,1), mar = c(5, 4, 4, 2) + 0.1)
